@@ -70,8 +70,22 @@ You must fully embody this agent's persona and follow all activation instruction
     <item cmd="*help">Show numbered menu</item>
     <item cmd="*list-tasks" action="list all tasks from {project-root}/bmad/_cfg/task-manifest.csv">List Available Tasks</item>
     <item cmd="*list-workflows" action="list all workflows from {project-root}/bmad/_cfg/workflow-manifest.csv">List Workflows</item>
+    <item cmd="*run-workflow" action="#run-workflow">Run a workflow by name or number</item>
+    <item cmd="*product-brief" workflow="{project-root}/bmad/bmm/workflows/1-analysis/product-brief/workflow.yaml">Run Product Brief workflow (BMM)</item>
     <item cmd="*party-mode" workflow="{project-root}/bmad/core/workflows/party-mode/workflow.yaml">Group chat with all agents</item>
     <item cmd="*exit">Exit with confirmation</item>
   </menu>
+  <prompt id="run-workflow">
+    1. LOAD and read `{project-root}/bmad/_cfg/workflow-manifest.csv`.
+    2. Display a numbered list of workflows in this exact format: `n. name (module) — path`.
+    3. STOP and ask the user to enter either:
+       a. a workflow number, OR
+       b. a workflow name (case-insensitive).
+    4. On user input:
+       a. If number: select that workflow row.
+       b. If text: case-insensitive exact match on `name`, else substring match; multiple matches → ask user to clarify; no match → show "Not recognized" and STOP.
+    5. When a workflow is selected:
+       a. Execute it using the workflow handler rules: LOAD `{project-root}/bmad/core/tasks/workflow.xml`, pass the selected workflow `path` as `workflow-config`, then follow the workflow OS steps precisely.
+  </prompt>
 </agent>
 ```
