@@ -1,6 +1,6 @@
 # Story 1.6: Create audit_event logging primitive
 
-Status: drafted
+Status: ready-for-dev
 
 ## Story
 
@@ -42,7 +42,7 @@ so that compliance review and debugging are possible.
 
 ### Context Reference
 
-<!-- Path(s) to story context XML will be added here by context workflow -->
+- `docs/stories/1-6-create-audit-event-logging-primitive.context.xml`
 
 ### Agent Model Used
 

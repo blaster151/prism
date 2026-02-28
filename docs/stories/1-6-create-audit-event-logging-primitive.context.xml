@@ -1,0 +1,52 @@
+<story-context id="bmad/bmm/workflows/4-implementation/story-context/template" v="1.0">
+  <metadata>
+    <epicId>1</epicId>
+    <storyId>6</storyId>
+    <title>Create audit_event logging primitive</title>
+    <status>drafted</status>
+    <generatedAt>2026-02-28</generatedAt>
+    <generator>BMAD Story Context Workflow</generator>
+    <sourceStoryPath>docs/stories/1-6-create-audit-event-logging-primitive.md</sourceStoryPath>
+  </metadata>
+
+  <story>
+    <asA>admin</asA>
+    <iWant>sensitive actions captured in an audit trail</iWant>
+    <soThat>compliance review and debugging are possible</soThat>
+    <tasks>
+      <task id="T1">Ensure <code>AuditEvent</code> exists in Prisma (AC: 1)</task>
+      <task id="T2">Implement <code>auditLogger</code> service and minimal event taxonomy (AC: 1)</task>
+      <task id="T3">Provide helper API for writing audit rows alongside mutations (AC: 1)</task>
+      <task id="T4">Implement at least one end-to-end auditable event (auth event) (AC: 1)</task>
+      <task id="T5">Add tests to verify audit events are written for an example action (AC: 1)</task>
+      <task id="T6">Verify application logs avoid raw resume content / sensitive PII (AC: 2)</task>
+    </tasks>
+  </story>
+
+  <acceptanceCriteria>
+    <ac id="1">Sensitive actions write an <code>audit_event</code> record with actor, type, optional entity pointer, and non-sensitive metadata.</ac>
+    <ac id="2">System never logs raw resume content or sensitive PII to application logs.</ac>
+  </acceptanceCriteria>
+
+  <artifacts>
+    <docs>
+      <doc path="docs/architecture.md" title="Architecture" section="ADR-006: Audit logging storage" snippet="Store audit events in Postgres <code>audit_event</code> table; include auth/admin/actions; metadata must be non-sensitive." />
+      <doc path="docs/architecture.md" title="Architecture" section="Implementation Patterns" snippet="Audit logging for sensitive actions performed inside the service layer; avoid PII in logs." />
+      <doc path="docs/tech-spec-epic-1.md" title="Epic 1 Tech Spec" section="Services and Modules" snippet="Audit module under <code>src/server/audit/</code> with <code>auditLogger.ts</code> and <code>eventTypes.ts</code>." />
+    </docs>
+    <code>
+      <file path="prisma/schema.prisma" kind="schema" symbol="AuditEvent" lines="30-45" reason="Audit row storage schema." />
+      <file path="src/server/auth.ts" kind="service" symbol="events" lines="80-112" reason="Auth events should emit audit rows end-to-end." />
+    </code>
+  </artifacts>
+
+  <constraints>
+    <constraint>Audit metadata must be non-sensitive (no raw resume content / PII). (Source: docs/stories/1-6-create-audit-event-logging-primitive.md#Acceptance Criteria)</constraint>
+    <constraint>Prefer writing audit rows in the same transaction as sensitive mutations when feasible. (Source: docs/stories/1-6-create-audit-event-logging-primitive.md#Dev Notes)</constraint>
+  </constraints>
+
+  <tests>
+    <standards>Use non-interactive unit tests; mock Prisma to verify audit writes without needing a DB.</standards>
+  </tests>
+</story-context>
+
