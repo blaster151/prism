@@ -1,6 +1,6 @@
 # Story 2.3: Data Record view/edit with provenance indicators
 
-Status: drafted
+Status: ready-for-dev
 
 ## Story
 
@@ -46,7 +46,7 @@ so that I can correct extraction errors without losing trust in the data.
 
 ### Context Reference
 
-<!-- Path(s) to story context XML will be added here by context workflow -->
+- `docs/stories/2-3-data-record-view-edit-with-provenance-indicators.context.xml`
 
 ### Agent Model Used
 
