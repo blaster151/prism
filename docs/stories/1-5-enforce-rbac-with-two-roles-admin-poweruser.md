@@ -1,6 +1,6 @@
 # Story 1.5: Enforce RBAC with two roles (Admin, PowerUser)
 
-Status: in-progress
+Status: review
 
 ## Story
 
@@ -16,11 +16,11 @@ so that only authorized users can access admin features and audit logs.
 
 ## Tasks / Subtasks
 
-- [ ] Define role model (`ADMIN`, `POWER_USER`) in the DB and app types (AC: 1, 2)
-- [ ] Implement `requireRole`/RBAC helpers in the server layer (AC: 3)
-- [ ] Apply RBAC checks to admin route handlers and admin UI entry points (AC: 1, 2)
-- [ ] Ensure unauthorized attempts are handled consistently (error envelope + no sensitive leakage) (AC: 1)
-- [ ] Add unit tests for RBAC helper(s) and one protected route (AC: 1, 2, 3)
+- [x] Define role model (`ADMIN`, `POWER_USER`) in the DB and app types (AC: 1, 2)
+- [x] Implement `requireRole`/RBAC helpers in the server layer (AC: 3)
+- [x] Apply RBAC checks to admin route handlers and admin UI entry points (AC: 1, 2)
+- [x] Ensure unauthorized attempts are handled consistently (error envelope + no sensitive leakage) (AC: 1)
+- [x] Add unit tests for RBAC helper(s) and one protected route (AC: 1, 2, 3)
 
 ## Dev Notes
 
@@ -50,10 +50,35 @@ GPT-5.2
 
 ### Debug Log References
 
+2026-02-28:
+- Implemented RBAC helpers under `src/server/auth/` and a minimal `AppError` envelope to standardize unauthorized responses.
+- Added a protected admin service (`adminPing`), a protected API route (`GET /api/admin/ping`), and an admin page entrypoint (`/admin`) that displays a safe forbidden message.
+- Added non-interactive unit tests using Vitest (`npm test`).
+
 ### Completion Notes List
 
+- ✅ POWER_USER receives a consistent 403 error envelope on admin API access; admin-only checks live in the service layer.
+- ✅ ADMIN is allowed to access the admin API and admin page.
+- ✅ Unit tests cover RBAC helper and a protected admin service.
+- ✅ `npm test`, `npm run lint`, and `npm run build` pass.
+
 ### File List
+
+- NEW: `src/server/auth/rbac.ts`
+- NEW: `src/server/auth/requireRole.ts`
+- NEW: `src/server/admin/adminService.ts`
+- NEW: `src/app/api/admin/ping/route.ts`
+- NEW: `src/app/admin/page.tsx`
+- NEW: `src/lib/errors.ts`
+- NEW: `vitest.config.ts`
+- NEW: `src/server/auth/requireRole.test.ts`
+- NEW: `src/server/admin/adminService.test.ts`
+- MODIFIED: `package.json`
+- MODIFIED: `package-lock.json`
+- MODIFIED: `docs/sprint-status.yaml`
+- MODIFIED: `docs/stories/1-5-enforce-rbac-with-two-roles-admin-poweruser.md`
 
 ## Change Log
 
 - 2026-02-28: Draft created
+- 2026-02-28: Implemented RBAC helpers + service-layer enforcement; added protected admin API/page; added unit tests; validated test/lint/build; marked ready for review
