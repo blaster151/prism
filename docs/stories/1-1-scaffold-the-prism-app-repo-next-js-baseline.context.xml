@@ -1,0 +1,68 @@
+<story-context id="bmad/bmm/workflows/4-implementation/story-context/template" v="1.0">
+  <metadata>
+    <epicId>1</epicId>
+    <storyId>1</storyId>
+    <title>Scaffold the Prism app repo (Next.js baseline)</title>
+    <status>drafted</status>
+    <generatedAt>2026-02-28</generatedAt>
+    <generator>BMAD Story Context Workflow</generator>
+    <sourceStoryPath>docs/stories/1-1-scaffold-the-prism-app-repo-next-js-baseline.md</sourceStoryPath>
+  </metadata>
+
+  <story>
+    <asA>developer</asA>
+    <iWant>a Next.js TypeScript application scaffolded with the agreed defaults</iWant>
+    <soThat>all subsequent stories build on a consistent foundation</soThat>
+    <tasks>
+      <task id="T1">Scaffold Next.js app using the documented initialization command (AC: 1, 2)</task>
+      <task id="T2">Add <code>.env.example</code> with placeholders for future services (DB/Redis/Auth) (AC: 3)</task>
+      <task id="T3">Ensure <code>docs/</code> is present and committed (AC: 3)</task>
+      <task id="T4">Create baseline directories (<code>src/components</code>, <code>src/server</code>, <code>src/jobs</code>) if not generated (AC: 4)</task>
+      <task id="T5">Add a minimal CI smoke check (install + build) (AC: 2)</task>
+    </tasks>
+  </story>
+
+  <acceptanceCriteria>
+    <ac id="1">The app is scaffolded using <code>create-next-app</code> with TypeScript, ESLint, Tailwind, App Router, and <code>src/</code>.</ac>
+    <ac id="2">The app runs locally and renders a basic home page.</ac>
+    <ac id="3">The repository includes <code>.env.example</code> and <code>docs/</code> committed.</ac>
+    <ac id="4">Baseline folder structure aligns with architecture: <code>src/app</code>, <code>src/components</code>, <code>src/server</code>, <code>src/jobs</code> exist.</ac>
+  </acceptanceCriteria>
+
+  <artifacts>
+    <docs>
+      <doc path="docs/epics.md" title="prism - Epic Breakdown" section="Story 1.1" snippet="Scaffold the Prism app repo using Next.js baseline with TypeScript/ESLint/Tailwind/App Router/src; commit docs/ and align baseline folders." />
+      <doc path="docs/architecture.md" title="Architecture" section="Project Initialization" snippet="Use create-next-app with TypeScript, ESLint, Tailwind, App Router, and src-dir; keep early implementation minimal and explicit." />
+      <doc path="docs/architecture.md" title="Architecture" section="Project Structure" snippet="Target structure includes src/app, src/components, src/server, src/jobs, plus docker/ and prisma/ for later stories." />
+      <doc path="docs/PRD.md" title="Product Requirements Document" section="Product Scope — Foundation (audit-ready baseline)" snippet="Initial delivery includes secure login, RBAC, audit logging, and an audit-ready posture; foundation work precedes ingestion/search functionality." />
+      <doc path="docs/tech-spec-epic-1.md" title="Epic Technical Specification" section="Acceptance Criteria (Authoritative)" snippet="Epic 1 ACs include scaffolding, repo structure, and CI-friendly test execution; Story 1.1 is the first prerequisite." />
+    </docs>
+    <code>
+      <note>No application source tree exists yet in this repository; Story 1.1 will create the Next.js scaffold and initial <code>src/</code> structure.</note>
+    </code>
+    <dependencies>
+      <note>No dependency manifests are present yet (no <code>package.json</code>). The Next.js scaffold created in Story 1.1 will introduce Node/Next.js dependencies.</note>
+    </dependencies>
+  </artifacts>
+
+  <constraints>
+    <constraint>Keep Story 1.1 intentionally minimal: scaffold only; do not introduce auth/db yet. (Source: docs/stories/1-1-scaffold-the-prism-app-repo-next-js-baseline.md#Dev Notes)</constraint>
+    <constraint>Align directory layout to architecture structure: ensure <code>src/app</code>, <code>src/components</code>, <code>src/server</code>, <code>src/jobs</code> exist. (Source: docs/architecture.md#Project Structure)</constraint>
+    <constraint>Do not commit secrets; use <code>.env.example</code> placeholders only. (Source: docs/PRD.md#Security and compliance posture)</constraint>
+  </constraints>
+
+  <interfaces>
+    <note>No runtime interfaces/APIs are required for Story 1.1.</note>
+  </interfaces>
+
+  <tests>
+    <standards>For Story 1.1, prefer a non-interactive CI smoke check (install + build) as a baseline. Full unit/E2E frameworks are established in Story 1.8; avoid adding watch-mode defaults in CI.</standards>
+    <locations>
+      <note>Test locations will be introduced by the scaffold and Story 1.8 (testing foundation).</note>
+    </locations>
+    <ideas>
+      <idea ac="2">CI smoke: repository installs dependencies and builds without prompts; local dev server starts and renders home page.</idea>
+      <idea ac="4">Repo structure check: required baseline directories exist after scaffold (<code>src/app</code>, <code>src/components</code>, <code>src/server</code>, <code>src/jobs</code>).</idea>
+    </ideas>
+  </tests>
+</story-context>
