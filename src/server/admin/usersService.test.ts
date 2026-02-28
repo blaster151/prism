@@ -3,42 +3,39 @@ import { describe, expect, it, vi } from "vitest";
 import { UserRole } from "@/server/auth/rbac";
 import { AppError } from "@/lib/errors";
 
-import { listUsers, setUserRole } from "@/server/admin/usersService";
-
 const auditLogMock = vi.fn(async () => ({ id: "ae1" }));
 
 vi.mock("@/server/audit/auditLogger", () => ({
   auditLog: auditLogMock,
 }));
 
-const tx = {
-  user: {
-    findUnique: vi.fn(async () => ({ role: UserRole.POWER_USER })),
-    update: vi.fn(async () => ({ id: "u2", role: UserRole.ADMIN })),
-  },
-} as unknown;
-
-const prismaMock = {
-  user: {
-    findMany: vi.fn(async () => [
-      {
-        id: "u1",
-        email: "a@example.com",
-        role: UserRole.ADMIN,
-        status: "ACTIVE",
-        createdAt: new Date(),
-        updatedAt: new Date(),
-      },
-    ]),
-  },
-  $transaction: vi.fn(async (fn: unknown) =>
-    (fn as (tx: unknown) => Promise<unknown>)(tx),
-  ),
-};
-
 vi.mock("@/server/db/prisma", () => ({
-  prisma: prismaMock,
+  prisma: {
+    user: {
+      findMany: vi.fn(async () => [
+        {
+          id: "u1",
+          email: "a@example.com",
+          role: UserRole.ADMIN,
+          status: "ACTIVE",
+          createdAt: new Date(),
+          updatedAt: new Date(),
+        },
+      ]),
+    },
+    $transaction: vi.fn(async (fn: unknown) => {
+      const tx = {
+        user: {
+          findUnique: vi.fn(async () => ({ role: UserRole.POWER_USER })),
+          update: vi.fn(async () => ({ id: "u2", role: UserRole.ADMIN })),
+        },
+      };
+      return (fn as (tx: unknown) => Promise<unknown>)(tx);
+    }),
+  },
 }));
+
+import { listUsers, setUserRole } from "@/server/admin/usersService";
 
 describe("usersService", () => {
   it("denies listUsers for POWER_USER", async () => {
