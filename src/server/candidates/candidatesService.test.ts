@@ -25,7 +25,7 @@ vi.mock("@/server/db/prisma", () => ({
       update: vi.fn(async () => ({ id: "c1", lifecycleState: CandidateLifecycleState.ARCHIVE })),
     },
     $transaction: vi.fn(async (fn: unknown) =>
-      (fn as (tx: any) => Promise<unknown>)({
+      (fn as (tx: unknown) => Promise<unknown>)({
         candidate: {
           findUnique: vi.fn(async () => ({ lifecycleState: CandidateLifecycleState.ACTIVE })),
           update: vi.fn(async () => ({ id: "c1", lifecycleState: CandidateLifecycleState.ARCHIVE })),
