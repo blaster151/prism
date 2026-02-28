@@ -1,4 +1,5 @@
 import type { NextAuthOptions } from "next-auth";
+import type { User } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 
 import { prisma } from "@/server/db/prisma";
@@ -31,44 +32,46 @@ export const authOptions: NextAuthOptions = {
             select: { id: true, email: true, role: true },
           });
 
-          return {
+          const authUser: User = {
             id: created.id,
             email: created.email,
             role: created.role,
-          } as any;
+          };
+          return authUser;
         }
 
         if (!user.passwordHash) return null;
         const ok = await bcrypt.compare(password, user.passwordHash);
         if (!ok) return null;
 
-        return {
+        const authUser: User = {
           id: user.id,
           email: user.email,
           role: user.role,
-        } as any;
+        };
+        return authUser;
       },
     }),
   ],
   callbacks: {
     async jwt({ token, user }) {
       if (user) {
-        token.sub = (user as any).id ?? token.sub;
-        (token as any).role = (user as any).role;
+        token.sub = user.id ?? token.sub;
+        token.role = user.role;
       }
-      if (token.sub && !(token as any).role) {
+      if (token.sub && !token.role) {
         const dbUser = await prisma.user.findUnique({
           where: { id: token.sub },
           select: { role: true },
         });
-        if (dbUser) (token as any).role = dbUser.role;
+        if (dbUser) token.role = dbUser.role;
       }
       return token;
     },
     async session({ session, token }) {
       if (session.user) {
-        (session.user as any).id = token.sub;
-        (session.user as any).role = (token as any).role;
+        session.user.id = token.sub;
+        session.user.role = token.role;
       }
       return session;
     },
@@ -76,7 +79,7 @@ export const authOptions: NextAuthOptions = {
   events: {
     async signIn(message) {
       try {
-        const actorUserId = (message.user as any)?.id as string | undefined;
+        const actorUserId = message.user?.id;
         if (!actorUserId) return;
         await prisma.auditEvent.create({
           data: {
@@ -91,7 +94,7 @@ export const authOptions: NextAuthOptions = {
     },
     async signOut(message) {
       try {
-        const actorUserId = (message.token?.sub as string | undefined) ?? undefined;
+        const actorUserId = message.token?.sub;
         if (!actorUserId) return;
         await prisma.auditEvent.create({
           data: {

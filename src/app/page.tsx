@@ -3,7 +3,7 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/server/auth";
 import { SignOutButton } from "@/components/SignOutButton";
 
-export default function Home() {
+export default async function Home() {
   const session = await getServerSession(authOptions);
 
   return (
@@ -22,7 +22,7 @@ export default function Home() {
             </div>
             <div>
               <span className="font-medium">Role:</span>{" "}
-              {(session?.user as any)?.role ?? "unknown"}
+              {session?.user?.role ?? "unknown"}
             </div>
           </div>
           <div className="mt-4 text-sm">
