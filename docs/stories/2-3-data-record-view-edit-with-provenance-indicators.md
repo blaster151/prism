@@ -1,6 +1,6 @@
 # Story 2.3: Data Record view/edit with provenance indicators
 
-Status: ready-for-dev
+Status: in-progress
 
 ## Story
 

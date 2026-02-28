@@ -52,6 +52,7 @@ model User {
 
   shortlists Shortlist[]
   provenanceEdits DataRecordFieldProvenance[] @relation("UserProvenanceEdits")
+  dataRecordVersions DataRecordVersion[] @relation("UserDataRecordVersions")
 
   @@map("user")
 }
@@ -99,8 +100,26 @@ model DataRecord {
 
   candidate   Candidate                 @relation(fields: [candidateId], references: [id], onDelete: Cascade)
   provenances DataRecordFieldProvenance[]
+  versions    DataRecordVersion[]
 
   @@map("data_record")
+}
+
+model DataRecordVersion {
+  id           String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  recordId     String   @db.Uuid @map("record_id")
+  versionNumber Int     @map("version_number")
+  fields       Json
+  actorUserId  String?  @db.Uuid @map("actor_user_id")
+  createdAt    DateTime @default(now()) @map("created_at")
+
+  record   DataRecord @relation(fields: [recordId], references: [id], onDelete: Cascade)
+  actorUser User?     @relation("UserDataRecordVersions", fields: [actorUserId], references: [id], onDelete: SetNull)
+
+  @@unique([recordId, versionNumber])
+  @@index([recordId])
+  @@index([createdAt])
+  @@map("data_record_version")
 }
 
 model DataRecordFieldProvenance {
