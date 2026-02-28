@@ -1,6 +1,6 @@
 # Story 2.2: Candidate list + lifecycle state (Active/Archive)
 
-Status: review
+Status: done
 
 ## Story
 
@@ -79,3 +79,28 @@ GPT-5.2
 
 - 2026-02-28: Draft created
 - 2026-02-28: Implemented candidates list + lifecycle filter/toggle with RBAC and audit logging; added tests; validated test/lint/build; marked ready for review
+- 2026-02-28: Code review approved; marked done
+
+## Senior Developer Review (AI)
+
+### Reviewer
+
+BMad
+
+### Date
+
+2026-02-28
+
+### Outcome
+
+Approve — candidates list + lifecycle filter/toggle are implemented with service-layer RBAC and audit logging.
+
+### Acceptance Criteria Coverage
+
+| AC# | Description | Status | Evidence |
+| --- | --- | --- | --- |
+| 1 | Candidates page displays list | IMPLEMENTED | `src/app/candidates/page.tsx`, `src/app/candidates/CandidateList.tsx`, `GET /api/candidates` |
+| 2 | Filter by lifecycle state (default Active) | IMPLEMENTED | `src/app/candidates/CandidateList.tsx`, `src/server/candidates/candidatesService.ts` |
+| 3 | Toggle Active/Archive | IMPLEMENTED | `PATCH /api/candidates/[id]/lifecycle`, `src/server/candidates/candidatesService.ts` |
+| 4 | Lifecycle changes audit-logged | IMPLEMENTED | `src/server/audit/eventTypes.ts`, `src/server/candidates/candidatesService.ts` |
+
