@@ -1,6 +1,6 @@
 # Story 2.1: Implement core candidate/data models in Prisma
 
-Status: ready-for-dev
+Status: in-progress
 
 ## Story
 

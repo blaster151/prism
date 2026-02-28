@@ -16,6 +16,30 @@ enum UserStatus {
   DISABLED
 }
 
+enum CandidateLifecycleState {
+  ACTIVE
+  ARCHIVE
+}
+
+enum DocumentProcessingStatus {
+  PENDING
+  COMPLETE
+  FAILED
+}
+
+enum DataProvenanceSource {
+  EXTRACTED
+  INFERRED
+  USER_EDITED
+}
+
+enum ShortlistItemState {
+  PINNED
+  KEPT
+  EXCLUDED
+  SUGGESTED
+}
+
 model User {
   id        String     @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   email     String     @unique
@@ -26,7 +50,123 @@ model User {
   createdAt DateTime   @default(now()) @map("created_at")
   updatedAt DateTime   @updatedAt @map("updated_at")
 
+  shortlists Shortlist[]
+  provenanceEdits DataRecordFieldProvenance[] @relation("UserProvenanceEdits")
+
   @@map("user")
+}
+
+model Candidate {
+  id                 String                 @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  lifecycleState     CandidateLifecycleState @default(ACTIVE) @map("lifecycle_state")
+  canonicalPersonKey String?                @map("canonical_person_key")
+  createdAt          DateTime               @default(now()) @map("created_at")
+  updatedAt          DateTime               @updatedAt @map("updated_at")
+
+  resumeDocuments ResumeDocument[]
+  dataRecord      DataRecord?
+  embeddings      Embedding[]
+  shortlistItems  ShortlistItem[]
+
+  @@index([lifecycleState])
+  @@map("candidate")
+}
+
+model ResumeDocument {
+  id              String                   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  candidateId     String                   @db.Uuid @map("candidate_id")
+  dropboxPath     String                   @map("dropbox_path")
+  contentHash     String?                  @map("content_hash")
+  ocrStatus       DocumentProcessingStatus @default(PENDING) @map("ocr_status")
+  extractionStatus DocumentProcessingStatus @default(PENDING) @map("extraction_status")
+  createdAt       DateTime                 @default(now()) @map("created_at")
+  updatedAt       DateTime                 @updatedAt @map("updated_at")
+
+  candidate   Candidate                  @relation(fields: [candidateId], references: [id], onDelete: Cascade)
+  provenances DataRecordFieldProvenance[] @relation("ProvenanceSourceDocument")
+
+  @@index([candidateId])
+  @@index([dropboxPath])
+  @@map("resume_document")
+}
+
+model DataRecord {
+  id          String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  candidateId String   @unique @db.Uuid @map("candidate_id")
+  fields      Json     @default("{}")
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+
+  candidate   Candidate                 @relation(fields: [candidateId], references: [id], onDelete: Cascade)
+  provenances DataRecordFieldProvenance[]
+
+  @@map("data_record")
+}
+
+model DataRecordFieldProvenance {
+  id                  String              @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  recordId             String              @db.Uuid @map("record_id")
+  fieldName            String              @map("field_name")
+  source               DataProvenanceSource @map("source")
+  sourceDocumentId     String?             @db.Uuid @map("source_document_id")
+  lastModifiedByUserId String?             @db.Uuid @map("last_modified_by_user_id")
+  lastModifiedAt       DateTime?           @map("last_modified_at")
+
+  record            DataRecord      @relation(fields: [recordId], references: [id], onDelete: Cascade)
+  sourceDocument    ResumeDocument? @relation("ProvenanceSourceDocument", fields: [sourceDocumentId], references: [id], onDelete: SetNull)
+  lastModifiedByUser User?          @relation("UserProvenanceEdits", fields: [lastModifiedByUserId], references: [id], onDelete: SetNull)
+
+  @@index([recordId])
+  @@index([fieldName])
+  @@index([source])
+  @@map("data_record_field_provenance")
+}
+
+model Embedding {
+  id             String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  candidateId    String   @db.Uuid @map("candidate_id")
+  vector         Json     @map("embedding_vector")
+  model          String   @map("embedding_model")
+  version        Int      @map("embedding_version")
+  createdAt      DateTime @default(now()) @map("created_at")
+
+  candidate Candidate @relation(fields: [candidateId], references: [id], onDelete: Cascade)
+
+  @@index([candidateId])
+  @@map("embedding")
+}
+
+model Shortlist {
+  id          String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  ownerUserId String   @db.Uuid @map("owner_user_id")
+  name        String
+  queryContext String? @map("query_context")
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+
+  ownerUser User          @relation(fields: [ownerUserId], references: [id], onDelete: Cascade)
+  items     ShortlistItem[]
+
+  @@index([ownerUserId])
+  @@map("shortlist")
+}
+
+model ShortlistItem {
+  id          String            @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  shortlistId String            @db.Uuid @map("shortlist_id")
+  candidateId String            @db.Uuid @map("candidate_id")
+  state       ShortlistItemState @default(SUGGESTED) @map("state")
+  rationale   String?           @map("rationale")
+  createdAt   DateTime          @default(now()) @map("created_at")
+  updatedAt   DateTime          @updatedAt @map("updated_at")
+
+  shortlist Shortlist @relation(fields: [shortlistId], references: [id], onDelete: Cascade)
+  candidate Candidate @relation(fields: [candidateId], references: [id], onDelete: Cascade)
+
+  @@unique([shortlistId, candidateId])
+  @@index([candidateId])
+  @@index([state])
+  @@map("shortlist_item")
 }
 
 model AuditEvent {

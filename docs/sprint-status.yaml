@@ -48,7 +48,7 @@ development_status:
   epic-1-retrospective: optional
 
   epic-2: backlog
-  2-1-implement-core-candidate-data-models-in-prisma: ready-for-dev
+  2-1-implement-core-candidate-data-models-in-prisma: in-progress
   2-2-candidate-list-lifecycle-state-active-archive: drafted
   2-3-data-record-view-edit-with-provenance-indicators: drafted
   2-4-unit-tests-for-data-record-provenance-lifecycle-rules: drafted
