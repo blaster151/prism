@@ -8,8 +8,22 @@ vi.mock("@/server/audit/auditLogger", () => ({
   auditLog: vi.fn(async () => ({ id: "ae1" })),
 }));
 
-vi.mock("@/server/db/prisma", () => ({
-  prisma: {
+vi.mock("@/server/db/prisma", () => {
+  const tx = {
+    candidate: {
+      findUnique: vi.fn(async () => ({
+        lifecycleState: CandidateLifecycleState.ACTIVE,
+      })),
+      update: vi.fn(async () => ({
+        id: "c1",
+        lifecycleState: CandidateLifecycleState.ARCHIVE,
+      })),
+    },
+    auditEvent: { create: vi.fn(async () => ({ id: "ae1" })) },
+  };
+
+  const prisma = {
+    __tx: tx,
     candidate: {
       findMany: vi.fn(async () => [
         {
@@ -21,20 +35,14 @@ vi.mock("@/server/db/prisma", () => ({
           _count: { resumeDocuments: 0 },
         },
       ]),
-      findUnique: vi.fn(async () => ({ lifecycleState: CandidateLifecycleState.ACTIVE })),
-      update: vi.fn(async () => ({ id: "c1", lifecycleState: CandidateLifecycleState.ARCHIVE })),
     },
     $transaction: vi.fn(async (fn: unknown) =>
-      (fn as (tx: unknown) => Promise<unknown>)({
-        candidate: {
-          findUnique: vi.fn(async () => ({ lifecycleState: CandidateLifecycleState.ACTIVE })),
-          update: vi.fn(async () => ({ id: "c1", lifecycleState: CandidateLifecycleState.ARCHIVE })),
-        },
-        auditEvent: { create: vi.fn(async () => ({ id: "ae1" })) },
-      }),
+      (fn as (tx: unknown) => Promise<unknown>)(tx),
     ),
-  },
-}));
+  };
+
+  return { prisma };
+});
 
 import { listCandidates, setCandidateLifecycle } from "./candidatesService";
 
@@ -54,6 +62,26 @@ describe("candidatesService", () => {
         lifecycleState: CandidateLifecycleState.ARCHIVE,
       }),
     ).rejects.toBeInstanceOf(AppError);
+  });
+
+  it("toggles lifecycle and writes audit event", async () => {
+    const res = await setCandidateLifecycle({
+      user: { id: "u1", email: "p@example.com", role: UserRole.POWER_USER },
+      candidateId: "c1",
+      lifecycleState: CandidateLifecycleState.ARCHIVE,
+    });
+
+    expect(res.candidate.lifecycleState).toBe(CandidateLifecycleState.ARCHIVE);
+
+    const { auditLog } = await import("@/server/audit/auditLogger");
+    expect(auditLog).toHaveBeenCalledWith(
+      expect.objectContaining({
+        eventType: expect.stringMatching(/candidate\.lifecycle_change/),
+        entityType: "candidate",
+        entityId: "c1",
+      }),
+      expect.any(Object),
+    );
   });
 });
 

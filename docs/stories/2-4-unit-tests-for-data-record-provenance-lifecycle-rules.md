@@ -1,6 +1,6 @@
 # Story 2.4: Unit tests for Data Record provenance + lifecycle rules
 
-Status: ready-for-dev
+Status: review
 
 ## Story
 
@@ -18,11 +18,11 @@ so that future ingestion and search changes do not break correctness or auditabi
 
 ## Tasks / Subtasks
 
-- [ ] Add unit/integration tests for provenance transition logic (AC: 1, 5)
-- [ ] Add unit/integration tests for lifecycle transition logic (AC: 2, 5)
-- [ ] Add tests ensuring RBAC helpers block/allow as expected (AC: 3)
-- [ ] Add tests verifying audit events are written for lifecycle/edit mutations (AC: 4)
-- [ ] Use stubs/mocks for any provider integrations; no network calls in CI (AC: 5)
+- [x] Add unit/integration tests for provenance transition logic (AC: 1, 5)
+- [x] Add unit/integration tests for lifecycle transition logic (AC: 2, 5)
+- [x] Add tests ensuring RBAC helpers block/allow as expected (AC: 3)
+- [x] Add tests verifying audit events are written for lifecycle/edit mutations (AC: 4)
+- [x] Use stubs/mocks for any provider integrations; no network calls in CI (AC: 5)
 
 ## Dev Notes
 
@@ -50,10 +50,27 @@ GPT-5.2
 
 ### Debug Log References
 
+2026-02-28:
+- Added/extended tests covering provenance transitions, lifecycle transitions, RBAC gating, and audit logging for sensitive mutations.
+- Verified `npm test`, `npm run lint`, and `npm run build` pass.
+
 ### Completion Notes List
 
+- ✅ Provenance transition covered via Data Record edit tests (`EXTRACTED/INFERRED` → `USER_EDITED` behavior enforced).
+- ✅ Lifecycle transition covered via candidate lifecycle mutation tests (Active → Archive) with audit logging.
+- ✅ RBAC gating covered via helper tests and mutation denial tests.
+- ✅ Audit events verified for both lifecycle and edit mutations.
+- ✅ Tests use mocks/stubs only; no network calls.
+
 ### File List
+
+- MODIFIED: `src/server/records/dataRecordService.test.ts`
+- MODIFIED: `src/server/candidates/candidatesService.test.ts`
+- (Existing coverage) `src/server/auth/requireRole.test.ts`
+- MODIFIED: `docs/sprint-status.yaml`
+- MODIFIED: `docs/stories/2-4-unit-tests-for-data-record-provenance-lifecycle-rules.md`
 
 ## Change Log
 
 - 2026-02-28: Draft created
+- 2026-02-28: Added trust-primitive test coverage for provenance/lifecycle/RBAC/audit; validated test/lint/build; marked ready for review
