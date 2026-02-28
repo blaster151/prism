@@ -211,3 +211,8 @@ External integrations in Epic 1:
 - **Integration tests**: Admin role update writes audit event; Prisma migrations apply; NextAuth session includes role.
 - **E2E tests (Playwright)**: auth gate (unauthenticated users are prompted to sign in).
 - **CI**: non-interactive test commands (no watch mode); build/lint step included.
+
+## Post-Review Follow-ups
+
+- Story 1.2: Add CI image builds for `docker/Dockerfile.app` and `docker/Dockerfile.worker` so “images build successfully” is continuously verified. [Source: docs/stories/1-2-create-cloud-run-deployment-skeleton-app-worker.md#Senior Developer Review (AI)]
+- Story 1.2: Clarify README deployment flow to explicitly cover Dockerfile-based build+deploy (or call out that `--source` uses buildpacks). [Source: docs/stories/1-2-create-cloud-run-deployment-skeleton-app-worker.md#Senior Developer Review (AI)]
