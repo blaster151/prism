@@ -20,7 +20,8 @@ describe("auditLog", () => {
 
     expect(res).toEqual({ id: "ae1" });
     const { prisma } = await import("@/server/db/prisma");
-    expect((prisma.auditEvent.create as any)).toHaveBeenCalledWith(
+    const create = prisma.auditEvent.create as unknown as ReturnType<typeof vi.fn>;
+    expect(create).toHaveBeenCalledWith(
       expect.objectContaining({
         data: expect.objectContaining({
           actorUserId: "u1",
