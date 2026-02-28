@@ -1,6 +1,6 @@
 # Story 2.1: Implement core candidate/data models in Prisma
 
-Status: review
+Status: done
 
 ## Story
 
@@ -76,3 +76,31 @@ GPT-5.2
 
 - 2026-02-28: Draft created
 - 2026-02-28: Implemented Epic 2 core Prisma models + migration; added schema invariant test; validated test/lint/build; marked ready for review
+- 2026-02-28: Code review approved; marked done
+
+## Senior Developer Review (AI)
+
+### Reviewer
+
+BMad
+
+### Date
+
+2026-02-28
+
+### Outcome
+
+Approve — core Epic 2 persistence models are in place, migrations apply cleanly, and provenance/lifecycle are explicitly modeled.
+
+### Summary
+
+Story 2.1 extends `prisma/schema.prisma` with the core data model needed for Epic 2+: `Candidate` (with lifecycle state), `ResumeDocument`, `DataRecord` (JSONB fields), `DataRecordFieldProvenance` (explicit per-field provenance and attribution pointers), `Shortlist`/`ShortlistItem`, and an `Embedding` placeholder for later pgvector adoption. All tables use UUID PKs and snake_case mappings. A migration is created and applied, and a small unit test guards the presence of key enums so later changes don’t silently remove trust primitives.
+
+### Acceptance Criteria Coverage
+
+| AC# | Description | Status | Evidence |
+| --- | --- | --- | --- |
+| 1 | Schema includes Candidate/ResumeDocument/DataRecord/provenance/Shortlist/ShortlistItem | IMPLEMENTED | `prisma/schema.prisma`, `prisma/migrations/20260228223002_epic2_core_models/migration.sql` |
+| 2 | Aligns with architecture (lifecycle + provenance + embeddings placeholder) | IMPLEMENTED | `prisma/schema.prisma`, `docs/architecture.md#Data Architecture` |
+| 3 | Migrations apply cleanly | IMPLEMENTED | Migration present + applied via `prisma migrate dev` |
+
