@@ -1,6 +1,6 @@
 # Story 1.7: Admin UI for user management (minimal)
 
-Status: ready-for-dev
+Status: in-progress
 
 ## Story
 

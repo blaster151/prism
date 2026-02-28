@@ -43,7 +43,7 @@ development_status:
   1-4-implement-nextauth-login-local-auth-baseline: done
   1-5-enforce-rbac-with-two-roles-admin-poweruser: done
   1-6-create-audit-event-logging-primitive: done
-  1-7-admin-ui-for-user-management-minimal: ready-for-dev
+  1-7-admin-ui-for-user-management-minimal: in-progress
   1-8-testing-foundation-unit-playwright-e2e: drafted
   epic-1-retrospective: optional
 
