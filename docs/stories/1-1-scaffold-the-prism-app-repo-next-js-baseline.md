@@ -1,6 +1,6 @@
 # Story 1.1: Scaffold the Prism app repo (Next.js baseline)
 
-Status: ready-for-dev
+Status: in-progress
 
 ## Story
 
@@ -49,6 +49,9 @@ so that all subsequent stories build on a consistent foundation.
 GPT-5.2
 
 ### Debug Log References
+
+2026-02-28:
+- Plan: scaffold Next.js (TypeScript, ESLint, Tailwind, App Router, src/) using create-next-app, add `.env.example`, ensure baseline `src/*` directories exist, add minimal CI smoke check, then run `npm run build`/`npm run lint`.
 
 ### Completion Notes List
 
