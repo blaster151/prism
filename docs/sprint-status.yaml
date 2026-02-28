@@ -1,0 +1,108 @@
+# generated: 2026-02-28
+# project: prism
+# project_key: prism
+# tracking_system: file-system
+# story_location: "{project-root}/docs/stories"
+#
+# STATUS DEFINITIONS:
+# ==================
+# Epic Status:
+#   - backlog: Epic exists in epic file but not contexted
+#   - contexted: Epic tech context created (required before drafting stories)
+#
+# Story Status:
+#   - backlog: Story only exists in epic file
+#   - drafted: Story file created in stories folder
+#   - ready-for-dev: Draft approved and story context created
+#   - in-progress: Developer actively working on implementation
+#   - review: Under SM review (via code-review workflow)
+#   - done: Story completed
+#
+# Retrospective Status:
+#   - optional: Can be completed but not required
+#   - completed: Retrospective has been done
+#
+# WORKFLOW NOTES:
+# ===============
+# - Epics should be 'contexted' before stories can be 'drafted'
+# - Stories can be worked in parallel if team capacity allows
+# - SM typically drafts next story after previous one is 'done' to incorporate learnings
+# - Dev moves story to 'review', SM reviews, then Dev moves to 'done'
+#
+generated: "2026-02-28"
+project: "prism"
+project_key: "prism"
+tracking_system: "file-system"
+story_location: "{project-root}/docs/stories"
+
+development_status:
+  epic-1: backlog
+  1-1-scaffold-the-prism-app-repo-next-js-baseline: drafted
+  1-2-create-cloud-run-deployment-skeleton-app-worker: drafted
+  1-3-add-postgres-prisma-baseline-schema-migrations: drafted
+  1-4-implement-nextauth-login-local-auth-baseline: drafted
+  1-5-enforce-rbac-with-two-roles-admin-poweruser: drafted
+  1-6-create-audit-event-logging-primitive: drafted
+  1-7-admin-ui-for-user-management-minimal: drafted
+  1-8-testing-foundation-unit-playwright-e2e: drafted
+  epic-1-retrospective: optional
+
+  epic-2: backlog
+  2-1-implement-core-candidate-data-models-in-prisma: backlog
+  2-2-candidate-list-lifecycle-state-active-archive: backlog
+  2-3-data-record-view-edit-with-provenance-indicators: backlog
+  2-4-unit-tests-for-data-record-provenance-lifecycle-rules: backlog
+  epic-2-retrospective: optional
+
+  epic-3: backlog
+  3-1-configure-redis-bullmq-plumbing-local-env: backlog
+  3-2-dropbox-client-integration-least-privilege: backlog
+  3-3-resume-ingestion-trigger-api-enqueue-ingest-job: backlog
+  3-4-job-status-ui-ingestion-pipeline-visibility: backlog
+  3-5-document-ocr-step-document-ai-behind-provider-interface: backlog
+  3-6-extraction-step-llm-over-extracted-text-with-provenance-staging: backlog
+  3-7-index-update-job-embeddings-fts-on-record-changes: backlog
+  3-8-playwright-e2e-ingest-trigger-status-visible: backlog
+  epic-3-retrospective: optional
+
+  epic-4: backlog
+  4-1-define-embedding-strategy-and-data-plumbing-pgvector-model-metadata: backlog
+  4-2-implement-embedding-generation-service-llm-provider-pluggable: backlog
+  4-3-build-hybrid-search-api-pgvector-postgres-fts-filters: backlog
+  4-4-search-ui-results-list-with-rank-explanation-summary: backlog
+  4-5-evidence-linked-explainability-data-record-fields-resume-spans: backlog
+  4-6-iterative-refinement-context-preserved-across-prompts: backlog
+  4-7-unit-integration-tests-for-hybrid-search-explainability-grounding: backlog
+  4-8-playwright-e2e-search-returns-ranked-results-with-explanations: backlog
+  epic-4-retrospective: optional
+
+  epic-5: backlog
+  5-1-shortlist-persistence-service-create-read-update: backlog
+  5-2-shortlist-ui-create-view: backlog
+  5-3-curation-actions-pin-keep-exclude: backlog
+  5-4-intent-persistence-across-refinements-and-re-ranking: backlog
+  5-5-shortlist-export-json-human-readable-with-rbac-audit: backlog
+  5-6-playwright-e2e-curation-persists-export-works: backlog
+  epic-5-retrospective: optional
+
+  epic-6: backlog
+  6-1-implement-cec-resume-template-renderer-from-data-record: backlog
+  6-2-controlled-export-endpoint-for-cec-resumes-rbac-audit: backlog
+  6-3-ui-action-to-generate-export-cec-resume: backlog
+  6-4-unit-tests-for-resume-renderer-export-gating: backlog
+  6-5-playwright-e2e-generate-export-cec-resume: backlog
+  epic-6-retrospective: optional
+
+  epic-7: backlog
+  7-1-implement-duplicate-updated-resume-detection-heuristic: backlog
+  7-2-reconciliation-review-ui-human-mediated: backlog
+  7-3-merge-workflow-preserving-provenance-version-history: backlog
+  7-4-tests-for-reconciliation-detection-merge-invariants: backlog
+  epic-7-retrospective: optional
+
+  epic-8: backlog
+  8-1-implement-token-usage-tracking-for-llm-calls: backlog
+  8-2-operational-job-metrics-ingestion-pipeline-health: backlog
+  8-3-admin-dashboard-for-usage-job-health-guardrails: backlog
+  8-4-tests-for-usage-tracking-dashboard-rbac: backlog
+  epic-8-retrospective: optional
