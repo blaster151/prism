@@ -8,7 +8,7 @@ import { adminPing } from "@/server/admin/adminService";
 export async function GET() {
   try {
     const session = await getServerSession(authOptions);
-    const result = adminPing({ user: session?.user });
+    const result = await adminPing({ user: session?.user });
     return NextResponse.json({ data: result });
   } catch (err) {
     if (isAppError(err)) {

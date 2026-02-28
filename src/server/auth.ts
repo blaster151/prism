@@ -3,6 +3,8 @@ import type { User } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 
 import { prisma } from "@/server/db/prisma";
+import { auditLog } from "@/server/audit/auditLogger";
+import { AuditEventTypes } from "@/server/audit/eventTypes";
 
 import { UserStatus } from "@prisma/client";
 import bcrypt from "bcryptjs";
@@ -83,12 +85,10 @@ export const authOptions: NextAuthOptions = {
       try {
         const actorUserId = message.user?.id;
         if (!actorUserId) return;
-        await prisma.auditEvent.create({
-          data: {
-            actorUserId,
-            eventType: "auth.sign_in",
-            metadata: { provider: message.account?.provider },
-          },
+        await auditLog({
+          actorUserId,
+          eventType: AuditEventTypes.AuthSignIn,
+          metadata: { provider: message.account?.provider ?? null },
         });
       } catch {
         // Do not block auth on audit failure.
@@ -98,12 +98,10 @@ export const authOptions: NextAuthOptions = {
       try {
         const actorUserId = message.token?.sub;
         if (!actorUserId) return;
-        await prisma.auditEvent.create({
-          data: {
-            actorUserId,
-            eventType: "auth.sign_out",
-            metadata: {},
-          },
+        await auditLog({
+          actorUserId,
+          eventType: AuditEventTypes.AuthSignOut,
+          metadata: {},
         });
       } catch {
         // Do not block auth on audit failure.

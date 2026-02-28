@@ -1,6 +1,6 @@
 # Story 1.6: Create audit_event logging primitive
 
-Status: ready-for-dev
+Status: in-progress
 
 ## Story
 

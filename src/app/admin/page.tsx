@@ -9,7 +9,7 @@ export default async function AdminPage() {
   const session = await getServerSession(authOptions);
 
   try {
-    adminPing({ user: session?.user });
+    await adminPing({ user: session?.user });
   } catch (err) {
     if (isAppError(err)) {
       return (
