@@ -38,7 +38,7 @@ story_location: "{project-root}/docs/stories"
 development_status:
   epic-1: contexted
   1-1-scaffold-the-prism-app-repo-next-js-baseline: done
-  1-2-create-cloud-run-deployment-skeleton-app-worker: in-progress
+  1-2-create-cloud-run-deployment-skeleton-app-worker: review
   1-3-add-postgres-prisma-baseline-schema-migrations: done
   1-4-implement-nextauth-login-local-auth-baseline: done
   1-5-enforce-rbac-with-two-roles-admin-poweruser: done

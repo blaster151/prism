@@ -1,6 +1,6 @@
 # Story 1.2: Create Cloud Run deployment skeleton (app + worker)
 
-Status: in-progress
+Status: review
 
 ## Story
 
@@ -26,9 +26,9 @@ so that we can deploy early and iterate with confidence.
 
 ### Review Follow-ups (AI)
 
-- [ ] [AI-Review][Med] Add a CI step to build `docker/Dockerfile.app` and `docker/Dockerfile.worker` so AC #2 (“images build successfully”) is verifiable. (AC: 2) [file: .github/workflows/ci.yml]
-- [ ] [AI-Review][Med] Update Cloud Run deployment docs to show an image-based deploy flow (or explicitly state `--source` uses buildpacks and may not exercise the Dockerfiles). (AC: 3) [file: README.md]
-- [ ] [AI-Review][Low] Fix README edit path to `src/app/page.tsx` (not `app/page.tsx`). [file: README.md]
+- [x] [AI-Review][Med] Add a CI step to build `docker/Dockerfile.app` and `docker/Dockerfile.worker` so AC #2 (“images build successfully”) is verifiable. (AC: 2) [file: .github/workflows/ci.yml]
+- [x] [AI-Review][Med] Update Cloud Run deployment docs to show an image-based deploy flow (or explicitly state `--source` uses buildpacks and may not exercise the Dockerfiles). (AC: 3) [file: README.md]
+- [x] [AI-Review][Low] Fix README edit path to `src/app/page.tsx` (not `app/page.tsx`). [file: README.md]
 
 ## Dev Notes
 
@@ -88,6 +88,7 @@ GPT-5.2
 - 2026-02-28: Draft created
 - 2026-02-28: Added Cloud Run app/worker Dockerfiles, placeholder worker, and deploy instructions; marked ready for review
 - 2026-02-28: Senior Developer Review (AI) notes appended (Changes Requested)
+- 2026-02-28: Addressed review follow-ups (CI docker builds + README clarification); marked ready for re-review
 
 ## Senior Developer Review (AI)
 
