@@ -1,0 +1,53 @@
+<story-context id="bmad/bmm/workflows/4-implementation/story-context/template" v="1.0">
+  <metadata>
+    <epicId>1</epicId>
+    <storyId>5</storyId>
+    <title>Enforce RBAC with two roles (Admin, PowerUser)</title>
+    <status>drafted</status>
+    <generatedAt>2026-02-28</generatedAt>
+    <generator>BMAD Story Context Workflow</generator>
+    <sourceStoryPath>docs/stories/1-5-enforce-rbac-with-two-roles-admin-poweruser.md</sourceStoryPath>
+  </metadata>
+
+  <story>
+    <asA>admin</asA>
+    <iWant>role-based access control enforced consistently</iWant>
+    <soThat>only authorized users can access admin features and audit logs</soThat>
+    <tasks>
+      <task id="T1">Define role model (<code>ADMIN</code>, <code>POWER_USER</code>) in DB and app types (AC: 1, 2)</task>
+      <task id="T2">Implement RBAC helpers (<code>requireRole</code>) in server layer (AC: 3)</task>
+      <task id="T3">Apply RBAC checks to admin route handlers and admin UI entry points (AC: 1, 2)</task>
+      <task id="T4">Handle unauthorized attempts consistently (error envelope + no sensitive leakage) (AC: 1)</task>
+      <task id="T5">Add unit tests for RBAC helper(s) and one protected route (AC: 1, 2, 3)</task>
+    </tasks>
+  </story>
+
+  <acceptanceCriteria>
+    <ac id="1">A signed-in user with role <code>POWER_USER</code> is denied access to admin-only routes/APIs with a clear error.</ac>
+    <ac id="2">A signed-in user with role <code>ADMIN</code> can access admin routes/APIs.</ac>
+    <ac id="3">RBAC is enforced in the service layer (not only in the UI).</ac>
+  </acceptanceCriteria>
+
+  <artifacts>
+    <docs>
+      <doc path="docs/architecture.md" title="Architecture" section="ADR-005: Authorization (RBAC) and role model" snippet="Ship with two roles (Admin, PowerUser); enforce sensitive actions in the service layer." />
+      <doc path="docs/architecture.md" title="Architecture" section="Implementation Patterns" snippet="Service layer first; Route Handlers/UI call <code>src/server/*</code> services; RBAC checks live in the service layer." />
+      <doc path="docs/tech-spec-epic-1.md" title="Epic 1 Tech Spec" section="Detailed Design / Services and Modules" snippet="RBAC helpers expected under <code>src/server/auth/</code>; session must surface user role." />
+      <doc path="prisma/schema.prisma" title="Prisma schema" section="UserRole enum" snippet="UserRole includes <code>ADMIN</code> and <code>POWER_USER</code> to support RBAC." />
+    </docs>
+    <code>
+      <file path="prisma/schema.prisma" kind="schema" symbol="UserRole/User" lines="9-28" reason="Role source of truth." />
+      <file path="src/server/auth.ts" kind="service" symbol="authOptions" lines="1-120" reason="Session token includes role for RBAC checks." />
+    </code>
+  </artifacts>
+
+  <constraints>
+    <constraint>RBAC decisions must be enforced in server-side service code (not only UI rendering). (Source: docs/stories/1-5-enforce-rbac-with-two-roles-admin-poweruser.md#Acceptance Criteria)</constraint>
+    <constraint>Unauthorized responses must be user-safe and not leak sensitive details. (Source: docs/architecture.md#Error Handling)</constraint>
+  </constraints>
+
+  <tests>
+    <standards>Use a non-interactive unit test runner; keep tests minimal (RBAC helper + one protected service/route).</standards>
+  </tests>
+</story-context>
+

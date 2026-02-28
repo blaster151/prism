@@ -1,6 +1,6 @@
 # Story 1.5: Enforce RBAC with two roles (Admin, PowerUser)
 
-Status: drafted
+Status: ready-for-dev
 
 ## Story
 
@@ -42,7 +42,7 @@ so that only authorized users can access admin features and audit logs.
 
 ### Context Reference
 
-<!-- Path(s) to story context XML will be added here by context workflow -->
+- `docs/stories/1-5-enforce-rbac-with-two-roles-admin-poweruser.context.xml`
 
 ### Agent Model Used
 
