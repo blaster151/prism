@@ -1,6 +1,6 @@
 # Story 2.2: Candidate list + lifecycle state (Active/Archive)
 
-Status: ready-for-dev
+Status: in-progress
 
 ## Story
 
