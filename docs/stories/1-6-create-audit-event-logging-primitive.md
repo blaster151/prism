@@ -1,6 +1,6 @@
 # Story 1.6: Create audit_event logging primitive
 
-Status: review
+Status: done
 
 ## Story
 
@@ -78,3 +78,62 @@ GPT-5.2
 
 - 2026-02-28: Draft created
 - 2026-02-28: Implemented audit logging primitive + taxonomy; wired into auth/admin; added tests; validated test/lint/build; marked ready for review
+- 2026-02-28: Code review approved; marked done
+
+## Senior Developer Review (AI)
+
+### Reviewer
+
+BMad
+
+### Date
+
+2026-02-28
+
+### Outcome
+
+Approve — audit logging primitive is implemented with verifiable writes and safe metadata handling.
+
+### Summary
+
+Story 1.6 delivers the audit logging primitive under `src/server/audit/`: a small, reusable `auditLog()` helper and a minimal taxonomy in `eventTypes.ts`. Auth sign-in/sign-out events and an example admin access event now emit audit rows through the shared logger, satisfying the “end-to-end auditable event” requirement. Tests validate audit writes via a mocked Prisma client, and the implementation avoids logging raw resume content or sensitive PII in application logs.
+
+### Key Findings
+
+**HIGH**
+
+- None.
+
+**MEDIUM**
+
+- Consider tightening the audit taxonomy and metadata schema over time (e.g., per-event metadata allowlists) to avoid unbounded growth and reduce the risk of accidental sensitive data capture. (Evidence: `src/server/audit/auditLogger.ts`, `src/server/audit/eventTypes.ts`)
+
+**LOW**
+
+- `adminPing` currently writes an audit event on access; later admin actions (role changes, audit log viewing) should also emit explicit events with entity pointers for stronger traceability. (Evidence: `src/server/admin/adminService.ts`)
+
+### Acceptance Criteria Coverage
+
+| AC# | Description | Status | Evidence |
+| --- | --- | --- | --- |
+| 1 | Sensitive actions write `audit_event` with actor/type/entity/metadata | IMPLEMENTED | `src/server/audit/auditLogger.ts`, `src/server/auth.ts`, `src/server/admin/adminService.ts`, `prisma/schema.prisma` |
+| 2 | Never logs raw resume content or sensitive PII to app logs | IMPLEMENTED | No logging added; metadata constrained to JSON-safe values in `auditLog` usage (`src/server/audit/auditLogger.ts`) |
+
+**AC Coverage Summary:** 2 of 2 acceptance criteria fully implemented.
+
+### Task Completion Validation
+
+| Task | Marked As | Verified As | Evidence |
+| --- | --- | --- | --- |
+| Ensure `AuditEvent` exists | Completed | VERIFIED COMPLETE | `prisma/schema.prisma:32-45` |
+| Implement `auditLogger` + taxonomy | Completed | VERIFIED COMPLETE | `src/server/audit/auditLogger.ts`, `src/server/audit/eventTypes.ts` |
+| Helper API for audit rows alongside mutations | Completed | VERIFIED COMPLETE | `auditLog(input, { tx })` signature in `src/server/audit/auditLogger.ts` |
+| End-to-end auditable event | Completed | VERIFIED COMPLETE | `auth` events use audit logger in `src/server/auth.ts` |
+| Tests verify audit write | Completed | VERIFIED COMPLETE | `src/server/audit/auditLogger.test.ts` |
+| Verify logs avoid PII | Completed | VERIFIED COMPLETE | No raw resume content/logging introduced; safe metadata guidance adhered to |
+
+### Test Coverage and Gaps
+
+- Unit test verifies audit row write call contract without DB dependency.
+- Additional integration coverage (DB-backed) can be added later once CI provisions Postgres.
+
