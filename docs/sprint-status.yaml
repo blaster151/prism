@@ -36,8 +36,8 @@ tracking_system: "file-system"
 story_location: "{project-root}/docs/stories"
 
 development_status:
-  epic-1: backlog
-  1-1-scaffold-the-prism-app-repo-next-js-baseline: drafted
+  epic-1: contexted
+  1-1-scaffold-the-prism-app-repo-next-js-baseline: ready-for-dev
   1-2-create-cloud-run-deployment-skeleton-app-worker: drafted
   1-3-add-postgres-prisma-baseline-schema-migrations: drafted
   1-4-implement-nextauth-login-local-auth-baseline: drafted

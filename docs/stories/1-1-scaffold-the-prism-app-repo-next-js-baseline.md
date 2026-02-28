@@ -1,6 +1,6 @@
 # Story 1.1: Scaffold the Prism app repo (Next.js baseline)
 
-Status: drafted
+Status: ready-for-dev
 
 ## Story
 
@@ -42,7 +42,7 @@ so that all subsequent stories build on a consistent foundation.
 
 ### Context Reference
 
-<!-- Path(s) to story context XML will be added here by context workflow -->
+- `docs/stories/1-1-scaffold-the-prism-app-repo-next-js-baseline.context.xml`
 
 ### Agent Model Used
 
