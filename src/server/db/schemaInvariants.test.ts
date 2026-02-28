@@ -1,25 +1,22 @@
 import { describe, expect, it } from "vitest";
 
 import {
-  CandidateLifecycleState,
-  DataProvenanceSource,
-  DocumentProcessingStatus,
-  ShortlistItemState,
+  Prisma,
 } from "@prisma/client";
 
 describe("prisma schema invariants", () => {
   it("includes expected enums for lifecycle/provenance/shortlists", () => {
-    expect(CandidateLifecycleState.ACTIVE).toBe("ACTIVE");
-    expect(CandidateLifecycleState.ARCHIVE).toBe("ARCHIVE");
+    expect(Prisma.CandidateLifecycleState.ACTIVE).toBe("ACTIVE");
+    expect(Prisma.CandidateLifecycleState.ARCHIVE).toBe("ARCHIVE");
 
-    expect(DataProvenanceSource.EXTRACTED).toBe("EXTRACTED");
-    expect(DataProvenanceSource.USER_EDITED).toBe("USER_EDITED");
+    expect(Prisma.DataProvenanceSource.EXTRACTED).toBe("EXTRACTED");
+    expect(Prisma.DataProvenanceSource.USER_EDITED).toBe("USER_EDITED");
 
-    expect(DocumentProcessingStatus.PENDING).toBe("PENDING");
-    expect(DocumentProcessingStatus.COMPLETE).toBe("COMPLETE");
+    expect(Prisma.DocumentProcessingStatus.PENDING).toBe("PENDING");
+    expect(Prisma.DocumentProcessingStatus.COMPLETE).toBe("COMPLETE");
 
-    expect(ShortlistItemState.SUGGESTED).toBe("SUGGESTED");
-    expect(ShortlistItemState.PINNED).toBe("PINNED");
+    expect(Prisma.ShortlistItemState.SUGGESTED).toBe("SUGGESTED");
+    expect(Prisma.ShortlistItemState.PINNED).toBe("PINNED");
   });
 });
 
