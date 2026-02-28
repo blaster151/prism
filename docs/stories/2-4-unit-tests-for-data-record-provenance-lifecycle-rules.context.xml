@@ -1,0 +1,41 @@
+<story-context id="bmad/bmm/workflows/4-implementation/story-context/template" v="1.0">
+  <metadata>
+    <epicId>2</epicId>
+    <storyId>4</storyId>
+    <title>Unit tests for Data Record provenance + lifecycle rules</title>
+    <status>drafted</status>
+    <generatedAt>2026-02-28</generatedAt>
+    <generator>BMAD Story Context Workflow</generator>
+    <sourceStoryPath>docs/stories/2-4-unit-tests-for-data-record-provenance-lifecycle-rules.md</sourceStoryPath>
+  </metadata>
+
+  <story>
+    <asA>developer</asA>
+    <iWant>automated tests around provenance and lifecycle behavior</iWant>
+    <soThat>future changes don’t break correctness or auditability</soThat>
+    <tasks>
+      <task id="T1">Tests for provenance transitions (AC: 1, 5)</task>
+      <task id="T2">Tests for lifecycle transitions (AC: 2, 5)</task>
+      <task id="T3">Tests for RBAC gating (AC: 3)</task>
+      <task id="T4">Tests for audit events on sensitive mutations (AC: 4)</task>
+      <task id="T5">No network calls; deterministic (AC: 5)</task>
+    </tasks>
+  </story>
+
+  <acceptanceCriteria>
+    <ac id="1">Coverage for provenance source transitions (EXTRACTED → USER_EDITED).</ac>
+    <ac id="2">Coverage for lifecycle transitions (Active/Archive).</ac>
+    <ac id="3">Coverage for RBAC gating for restricted actions.</ac>
+    <ac id="4">Coverage for audit event creation for sensitive mutations.</ac>
+    <ac id="5">Fast/deterministic; no external API calls.</ac>
+  </acceptanceCriteria>
+
+  <artifacts>
+    <code>
+      <file path="src/server/candidates/candidatesService.ts" kind="service" symbol="setCandidateLifecycle" lines="1-120" reason="Lifecycle mutation + audit log." />
+      <file path="src/server/records/dataRecordService.ts" kind="service" symbol="updateCandidateRecord" lines="1-220" reason="Provenance transition + audit log + versioning." />
+      <file path="src/server/auth/requireRole.ts" kind="service" symbol="requireRole" lines="1-60" reason="RBAC gating." />
+    </code>
+  </artifacts>
+</story-context>
+
