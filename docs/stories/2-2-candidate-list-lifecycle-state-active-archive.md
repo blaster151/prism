@@ -1,6 +1,6 @@
 # Story 2.2: Candidate list + lifecycle state (Active/Archive)
 
-Status: drafted
+Status: ready-for-dev
 
 ## Story
 
@@ -43,7 +43,7 @@ so that I can focus on current pipelines while retaining history.
 
 ### Context Reference
 
-<!-- Path(s) to story context XML will be added here by context workflow -->
+- `docs/stories/2-2-candidate-list-lifecycle-state-active-archive.context.xml`
 
 ### Agent Model Used
 
