@@ -1,6 +1,6 @@
 # Story 1.3: Add Postgres + Prisma baseline (schema + migrations)
 
-Status: ready-for-dev
+Status: review
 
 ## Story
 
@@ -18,11 +18,11 @@ so that we can persist users, candidates, and audit events consistently.
 
 ## Tasks / Subtasks
 
-- [ ] Add Prisma to the repo and initialize `prisma/schema.prisma` (AC: 1, 5)
-- [ ] Define baseline models (`User`, `AuditEvent`) with UUID PKs and mappings (AC: 3, 4)
-- [ ] Add local Postgres connection config via env (`DATABASE_URL`) and document in `.env.example` (AC: 1, 5)
-- [ ] Create and run the first migration; verify `prisma migrate dev` passes in a clean env (AC: 2)
-- [ ] Add a minimal DB connectivity check path (health check or script) (AC: 5)
+- [x] Add Prisma to the repo and initialize `prisma/schema.prisma` (AC: 1, 5)
+- [x] Define baseline models (`User`, `AuditEvent`) with UUID PKs and mappings (AC: 3, 4)
+- [x] Add local Postgres connection config via env (`DATABASE_URL`) and document in `.env.example` (AC: 1, 5)
+- [x] Create and run the first migration; verify `prisma migrate dev` passes in a clean env (AC: 2)
+- [x] Add a minimal DB connectivity check path (health check or script) (AC: 5)
 
 ## Dev Notes
 
@@ -52,10 +52,32 @@ GPT-5.2
 
 ### Debug Log References
 
+2026-02-28:
+- Added Prisma ORM and Postgres adapter configuration required by Prisma 7 (`prisma.config.ts` + `@prisma/adapter-pg`).
+- Provisioned local Postgres and ran `npx prisma generate` + `npx prisma migrate dev --name init`.
+- Verified `npm run lint` and `npm run build` pass after adding DB client wiring.
+
 ### Completion Notes List
 
+- ✅ Prisma configured for Postgres via `DATABASE_URL` (no secrets committed).
+- ✅ Baseline schema includes `User` and `AuditEvent` with UUID PKs and snake_case mappings.
+- ✅ Initial migration created and applied successfully.
+- ✅ Minimal DB connectivity check added at `GET /api/health/db`.
+
 ### File List
+
+- NEW: `prisma/schema.prisma`
+- NEW: `prisma/migrations/20260228193329_init/migration.sql`
+- NEW: `prisma.config.ts`
+- NEW: `src/server/db/prisma.ts`
+- NEW: `src/app/api/health/db/route.ts`
+- NEW: `docs/stories/1-3-add-postgres-prisma-baseline-schema-migrations.context.xml`
+- MODIFIED: `package.json`
+- MODIFIED: `package-lock.json`
+- MODIFIED: `docs/sprint-status.yaml`
+- MODIFIED: `docs/stories/1-3-add-postgres-prisma-baseline-schema-migrations.md`
 
 ## Change Log
 
 - 2026-02-28: Draft created
+- 2026-02-28: Implemented Prisma + Postgres baseline (schema, adapter config, migration, connectivity check); validated lint/build; marked ready for review
