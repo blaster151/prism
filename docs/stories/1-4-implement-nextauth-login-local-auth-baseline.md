@@ -1,6 +1,6 @@
 # Story 1.4: Implement NextAuth login (local auth baseline)
 
-Status: ready-for-dev
+Status: in-progress
 
 ## Story
 
