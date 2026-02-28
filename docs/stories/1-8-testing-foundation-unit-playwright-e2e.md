@@ -1,6 +1,6 @@
 # Story 1.8: Testing foundation (unit + Playwright E2E)
 
-Status: drafted
+Status: ready-for-dev
 
 ## Story
 
@@ -42,7 +42,7 @@ so that each subsequent story can ship with automated coverage and we can run an
 
 ### Context Reference
 
-<!-- Path(s) to story context XML will be added here by context workflow -->
+- `docs/stories/1-8-testing-foundation-unit-playwright-e2e.context.xml`
 
 ### Agent Model Used
 

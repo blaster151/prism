@@ -44,7 +44,7 @@ development_status:
   1-5-enforce-rbac-with-two-roles-admin-poweruser: done
   1-6-create-audit-event-logging-primitive: done
   1-7-admin-ui-for-user-management-minimal: done
-  1-8-testing-foundation-unit-playwright-e2e: drafted
+  1-8-testing-foundation-unit-playwright-e2e: ready-for-dev
   epic-1-retrospective: optional
 
   epic-2: backlog
