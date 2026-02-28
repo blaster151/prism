@@ -1,6 +1,6 @@
 # Story 1.7: Admin UI for user management (minimal)
 
-Status: drafted
+Status: ready-for-dev
 
 ## Story
 
@@ -43,7 +43,7 @@ so that access can be managed without developer intervention.
 
 ### Context Reference
 
-<!-- Path(s) to story context XML will be added here by context workflow -->
+- `docs/stories/1-7-admin-ui-for-user-management-minimal.context.xml`
 
 ### Agent Model Used
 

@@ -1,0 +1,53 @@
+<story-context id="bmad/bmm/workflows/4-implementation/story-context/template" v="1.0">
+  <metadata>
+    <epicId>1</epicId>
+    <storyId>7</storyId>
+    <title>Admin UI for user management (minimal)</title>
+    <status>drafted</status>
+    <generatedAt>2026-02-28</generatedAt>
+    <generator>BMAD Story Context Workflow</generator>
+    <sourceStoryPath>docs/stories/1-7-admin-ui-for-user-management-minimal.md</sourceStoryPath>
+  </metadata>
+
+  <story>
+    <asA>admin</asA>
+    <iWant>a minimal admin screen to manage users and roles</iWant>
+    <soThat>access can be managed without developer intervention</soThat>
+    <tasks>
+      <task id="T1">Create admin page gated by RBAC (AC: 1)</task>
+      <task id="T2">Implement list-users + update-role server APIs/services (AC: 1)</task>
+      <task id="T3">Ensure updates are protected by RBAC and emit <code>audit_event</code> entries (AC: 2)</task>
+      <task id="T4">Add basic UI feedback for success/failure and unauthorized access (AC: 3)</task>
+      <task id="T5">Add unit/integration tests for role update RBAC + audit log write (AC: 1, 2)</task>
+    </tasks>
+  </story>
+
+  <acceptanceCriteria>
+    <ac id="1">Admin can view users and set their role to Admin or PowerUser.</ac>
+    <ac id="2">Role changes are audit-logged.</ac>
+    <ac id="3">UX is minimal but correct.</ac>
+  </acceptanceCriteria>
+
+  <artifacts>
+    <docs>
+      <doc path="docs/architecture.md" title="Architecture" section="ADR-005: Authorization (RBAC) and role model" snippet="Admin-only capabilities include user/role management and access to audit log review/reporting." />
+      <doc path="docs/architecture.md" title="Architecture" section="ADR-006: Audit logging storage" snippet="Admin actions (including role changes) should write audit events with safe metadata." />
+      <doc path="docs/tech-spec-epic-1.md" title="Epic 1 Tech Spec" section="Admin user management (minimal contract)" snippet="GET users + PATCH user role; side effects: write audit_event." />
+    </docs>
+    <code>
+      <file path="src/server/auth/requireRole.ts" kind="service" symbol="requireRole" lines="1-40" reason="RBAC enforcement in service layer." />
+      <file path="src/server/audit/auditLogger.ts" kind="service" symbol="auditLog" lines="1-60" reason="Audit logging primitive used by admin role changes." />
+      <file path="prisma/schema.prisma" kind="schema" symbol="User/UserRole/AuditEvent" lines="9-45" reason="User roles persisted; audit events stored in Postgres." />
+    </code>
+  </artifacts>
+
+  <constraints>
+    <constraint>Admin-only functionality must be enforced in service layer and route handlers, not only UI. (Source: Story 1.7 Dev Notes)</constraint>
+    <constraint>Audit metadata must be sufficient for review without sensitive leakage. (Source: Story 1.7 Dev Notes)</constraint>
+  </constraints>
+
+  <tests>
+    <standards>Use non-interactive unit tests; mock Prisma + audit logger to verify RBAC and audit write on role update.</standards>
+  </tests>
+</story-context>
+
