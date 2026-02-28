@@ -3,10 +3,8 @@ import { describe, expect, it, vi } from "vitest";
 import { UserRole } from "@/server/auth/rbac";
 import { AppError } from "@/lib/errors";
 
-const auditLogMock = vi.fn(async () => ({ id: "ae1" }));
-
 vi.mock("@/server/audit/auditLogger", () => ({
-  auditLog: auditLogMock,
+  auditLog: vi.fn(async () => ({ id: "ae1" })),
 }));
 
 vi.mock("@/server/db/prisma", () => ({
@@ -63,7 +61,8 @@ describe("usersService", () => {
       }),
     ).resolves.toEqual({ user: { id: "u2", role: UserRole.ADMIN } });
 
-    expect(auditLogMock).toHaveBeenCalledWith(
+    const { auditLog } = await import("@/server/audit/auditLogger");
+    expect(auditLog).toHaveBeenCalledWith(
       expect.objectContaining({
         actorUserId: "u1",
         eventType: expect.stringMatching(/admin\.user\.role_change/),
