@@ -1,6 +1,6 @@
 # Story 1.8: Testing foundation (unit + Playwright E2E)
 
-Status: review
+Status: done
 
 ## Story
 
@@ -77,3 +77,51 @@ GPT-5.2
 
 - 2026-02-28: Draft created
 - 2026-02-28: Added unit test command + Playwright E2E baseline; added auth-gate E2E; wired CI; documented commands; validated test/lint/build; marked ready for review
+- 2026-02-28: Code review approved; marked done
+
+## Senior Developer Review (AI)
+
+### Reviewer
+
+BMad
+
+### Date
+
+2026-02-28
+
+### Outcome
+
+Approve — testing foundation is in place for unit + headless Playwright E2E with non-interactive runs.
+
+### Summary
+
+Story 1.8 establishes the repo’s testing foundation by standardizing non-interactive unit test runs (`npm test` via Vitest) and adding Playwright E2E support (`npm run test:e2e`). It includes the first minimal E2E that validates the auth gate behavior by asserting unauthenticated navigation to `/` redirects to `/auth/signin`. CI is updated to run unit tests, lint/build, install Playwright browsers, and run the E2E suite headlessly.
+
+### Key Findings
+
+**HIGH**
+
+- None.
+
+**MEDIUM**
+
+- CI installs Playwright browsers at runtime, which can add minutes to runs; consider caching Playwright browsers or using a pre-baked runner image later if CI time becomes an issue. (Evidence: `.github/workflows/ci.yml`)
+
+**LOW**
+
+- The Playwright webServer uses `npm run dev` for local/CI convenience; consider switching to `next start` in CI for closer-to-prod parity once the suite grows. (Evidence: `playwright.config.ts`)
+
+### Acceptance Criteria Coverage
+
+| AC# | Description | Status | Evidence |
+| --- | --- | --- | --- |
+| 1 | Standard unit/integration tests locally + CI | IMPLEMENTED | `package.json` (`test`), `vitest.config.ts`, `.github/workflows/ci.yml` (Unit tests) |
+| 2 | Standard Playwright E2E locally (headless) + CI | IMPLEMENTED | `package.json` (`test:e2e`), `playwright.config.ts`, `.github/workflows/ci.yml` (E2E) |
+| 3 | Minimal E2E validates auth gate | IMPLEMENTED | `e2e/auth-gate.spec.ts`, `src/middleware.ts`, `src/app/auth/signin/page.tsx` |
+| 4 | Test runs non-interactive | IMPLEMENTED | `vitest run` via `npm test`, `playwright test --reporter=line` via `npm run test:e2e` |
+
+### Test Coverage and Gaps
+
+- Baseline unit tests exist and run in CI.
+- One E2E validates the auth-gate redirect. Additional E2E flows (authenticated behavior) can be added once test-user bootstrapping is deterministic.
+
