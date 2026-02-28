@@ -1,6 +1,6 @@
 # Story 1.8: Testing foundation (unit + Playwright E2E)
 
-Status: ready-for-dev
+Status: in-progress
 
 ## Story
 

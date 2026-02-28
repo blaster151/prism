@@ -16,7 +16,15 @@ jobs:
           cache: "npm"
       - name: Install
         run: npm ci
+      - name: Unit tests
+        run: npm test
       - name: Lint
         run: npm run lint -- --max-warnings=0
       - name: Build
         run: npm run build
+      - name: Install Playwright browsers
+        run: npx playwright install --with-deps chromium
+      - name: E2E tests (Playwright)
+        env:
+          CI: "true"
+        run: npm run test:e2e
