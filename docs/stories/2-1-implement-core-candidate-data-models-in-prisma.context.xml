@@ -1,0 +1,47 @@
+<story-context id="bmad/bmm/workflows/4-implementation/story-context/template" v="1.0">
+  <metadata>
+    <epicId>2</epicId>
+    <storyId>1</storyId>
+    <title>Implement core candidate/data models in Prisma</title>
+    <status>drafted</status>
+    <generatedAt>2026-02-28</generatedAt>
+    <generator>BMAD Story Context Workflow</generator>
+    <sourceStoryPath>docs/stories/2-1-implement-core-candidate-data-models-in-prisma.md</sourceStoryPath>
+  </metadata>
+
+  <story>
+    <asA>developer</asA>
+    <iWant>Candidate, ResumeDocument, DataRecord, provenance, shortlist tables defined</iWant>
+    <soThat>ingestion, search, and exports can build on stable persistence</soThat>
+    <tasks>
+      <task id="T1">Extend Prisma schema with Candidate, ResumeDocument, DataRecord, Shortlist, ShortlistItem (AC: 1, 2, 3)</task>
+      <task id="T2">Add lifecycle state enum/field on Candidate (AC: 2)</task>
+      <task id="T3">Add provenance structure for DataRecord fields (AC: 2)</task>
+      <task id="T4">Snake_case mappings + UUID PKs (AC: 2)</task>
+      <task id="T5">Migrations apply cleanly (AC: 3)</task>
+      <task id="T6">Minimal tests for schema invariants/relations (AC: 1, 3)</task>
+    </tasks>
+  </story>
+
+  <acceptanceCriteria>
+    <ac id="1">Schema includes Candidate, ResumeDocument, DataRecord, provenance tracking, Shortlist, ShortlistItem models.</ac>
+    <ac id="2">Models align with architecture (lifecycle state, provenance, embeddings compatibility placeholder).</ac>
+    <ac id="3">Migrations apply cleanly via Prisma.</ac>
+  </acceptanceCriteria>
+
+  <artifacts>
+    <docs>
+      <doc path="docs/architecture.md" title="Architecture" section="Data Architecture" snippet="Candidate, ResumeDocument, DataRecord, provenance, embeddings, shortlist are core models." />
+      <doc path="docs/architecture.md" title="Architecture" section="Consistency Rules" snippet="Prisma PascalCase models; snake_case DB mapping; UUID PKs." />
+    </docs>
+    <code>
+      <file path="prisma/schema.prisma" kind="schema" symbol="models" lines="1-200" reason="Core persistence layer for Epic 2." />
+    </code>
+  </artifacts>
+
+  <constraints>
+    <constraint>Provenance must be explicit (not implied) to protect user trust. (Source: Story 2.1 Dev Notes)</constraint>
+    <constraint>Include room for JSONB extensibility while modeling key fields. (Source: Story 2.1 Dev Notes)</constraint>
+  </constraints>
+</story-context>
+

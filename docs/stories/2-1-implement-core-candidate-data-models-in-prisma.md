@@ -1,6 +1,6 @@
 # Story 2.1: Implement core candidate/data models in Prisma
 
-Status: drafted
+Status: ready-for-dev
 
 ## Story
 
@@ -42,7 +42,7 @@ so that ingestion, search, and exports can build on stable persistence.
 
 ### Context Reference
 
-<!-- Path(s) to story context XML will be added here by context workflow -->
+- `docs/stories/2-1-implement-core-candidate-data-models-in-prisma.context.xml`
 
 ### Agent Model Used
 
