@@ -1,0 +1,69 @@
+<story-context id="bmad/bmm/workflows/4-implementation/story-context/template" v="1.0">
+  <metadata>
+    <epicId>1</epicId>
+    <storyId>2</storyId>
+    <title>Create Cloud Run deployment skeleton (app + worker)</title>
+    <status>drafted</status>
+    <generatedAt>2026-02-28</generatedAt>
+    <generator>BMAD Story Context Workflow</generator>
+    <sourceStoryPath>docs/stories/1-2-create-cloud-run-deployment-skeleton-app-worker.md</sourceStoryPath>
+  </metadata>
+
+  <story>
+    <asA>developer</asA>
+    <iWant>Dockerfiles and baseline Cloud Run deployment configuration for the app and worker</iWant>
+    <soThat>we can deploy early and iterate with confidence</soThat>
+    <tasks>
+      <task id="T1">Add <code>docker/Dockerfile.app</code> for the Next.js service (AC: 1, 2)</task>
+      <task id="T2">Add <code>docker/Dockerfile.worker</code> for the worker service (AC: 1, 2, 5)</task>
+      <task id="T3">Add minimal deploy instructions (README or <code>docs/</code>) for two Cloud Run services (AC: 3)</task>
+      <task id="T4">Define required env vars in <code>.env.example</code> only (AC: 4)</task>
+      <task id="T5">Confirm no secrets are introduced into git history (AC: 4)</task>
+    </tasks>
+  </story>
+
+  <acceptanceCriteria>
+    <ac id="1">Dockerfiles exist for <code>prism-app</code> and <code>prism-worker</code>.</ac>
+    <ac id="2">Both images build successfully.</ac>
+    <ac id="3">Deployment instructions exist for deploying each as a separate Cloud Run service.</ac>
+    <ac id="4">Environment variables are sourced from secrets/config and are not committed.</ac>
+    <ac id="5">Worker can be a placeholder process (Redis later), but runs as a distinct service.</ac>
+  </acceptanceCriteria>
+
+  <artifacts>
+    <docs>
+      <doc path="docs/epics.md" title="prism - Epic Breakdown" section="Story 1.2" snippet="Add Dockerfiles and baseline Cloud Run deployment configuration for app + worker; keep worker placeholder until Redis/BullMQ is wired." />
+      <doc path="docs/architecture.md" title="Architecture" section="Project Structure" snippet="Target structure includes <code>docker/Dockerfile.app</code> and <code>docker/Dockerfile.worker</code>, and deploys as two Cloud Run services." />
+      <doc path="docs/architecture.md" title="Architecture" section="Deployment Architecture" snippet="Default deploy on GCP: Cloud Run for app + separate Cloud Run worker, backed by Cloud SQL and Memorystore later." />
+      <doc path="docs/tech-spec-epic-1.md" title="Epic Technical Specification" section="Services and Modules" snippet="Epic 1 explicitly calls for dockerfiles for app and worker; worker may be a placeholder but must run as a distinct service." />
+      <doc path=".github/workflows/ci.yml" title="CI" section="build job" snippet="CI currently runs <code>npm ci</code>, <code>npm run lint</code>, <code>npm run build</code> (non-interactive). Extend cautiously to avoid long-running prompts." />
+    </docs>
+    <code>
+      <file path="package.json" kind="manifest" symbol="scripts" lines="5-10" reason="Defines build/start scripts used by Dockerfile and CI." />
+      <file path=".env.example" kind="config" symbol="env placeholders" lines="1-17" reason="Defines env variables as placeholders; secrets must not be committed." />
+    </code>
+    <dependencies>
+      <note>Node/Next.js dependencies are defined in <code>package.json</code>; Dockerfiles should use <code>npm ci</code> based on <code>package-lock.json</code>.</note>
+    </dependencies>
+  </artifacts>
+
+  <constraints>
+    <constraint>Do not commit secrets; env vars should be configured via Cloud Run/Secret Manager and represented only as placeholders in <code>.env.example</code>. (Source: docs/stories/1-2-create-cloud-run-deployment-skeleton-app-worker.md#Acceptance Criteria, docs/PRD.md#Security and compliance posture)</constraint>
+    <constraint>Repository deploys as two Cloud Run services (app + worker) from a single repo; worker may be a placeholder but must be distinct. (Source: docs/architecture.md#Deployment Architecture, docs/tech-spec-epic-1.md#Objectives and Scope)</constraint>
+  </constraints>
+
+  <interfaces>
+    <note>No external APIs required for this story; focus is build/run packaging and deployment instructions.</note>
+  </interfaces>
+
+  <tests>
+    <standards>For this story, validate via <code>npm run lint</code> and <code>npm run build</code>, and (where possible) container image build. If no container runtime exists locally, ensure Dockerfiles are standard and add optional CI container-build steps later.</standards>
+    <locations>
+      <note>CI is defined in <code>.github/workflows/ci.yml</code>.</note>
+    </locations>
+    <ideas>
+      <idea ac="2">Container build: <code>docker build -f docker/Dockerfile.app .</code> and <code>docker build -f docker/Dockerfile.worker .</code> (or Cloud Build).</idea>
+      <idea ac="3">Docs check: deployment instructions include separate service names and environment variable setup via secrets.</idea>
+    </ideas>
+  </tests>
+</story-context>

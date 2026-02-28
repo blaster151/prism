@@ -1,0 +1,12 @@
+node_modules
+.next
+out
+build
+.git
+.cursor
+docs
+bmad
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.env*
