@@ -39,7 +39,7 @@ development_status:
   epic-1: contexted
   1-1-scaffold-the-prism-app-repo-next-js-baseline: done
   1-2-create-cloud-run-deployment-skeleton-app-worker: in-progress
-  1-3-add-postgres-prisma-baseline-schema-migrations: drafted
+  1-3-add-postgres-prisma-baseline-schema-migrations: ready-for-dev
   1-4-implement-nextauth-login-local-auth-baseline: drafted
   1-5-enforce-rbac-with-two-roles-admin-poweruser: drafted
   1-6-create-audit-event-logging-primitive: drafted

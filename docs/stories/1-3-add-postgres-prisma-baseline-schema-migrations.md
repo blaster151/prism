@@ -1,6 +1,6 @@
 # Story 1.3: Add Postgres + Prisma baseline (schema + migrations)
 
-Status: drafted
+Status: ready-for-dev
 
 ## Story
 
@@ -44,7 +44,7 @@ so that we can persist users, candidates, and audit events consistently.
 
 ### Context Reference
 
-<!-- Path(s) to story context XML will be added here by context workflow -->
+- `docs/stories/1-3-add-postgres-prisma-baseline-schema-migrations.context.xml`
 
 ### Agent Model Used
 

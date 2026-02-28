@@ -1,0 +1,69 @@
+<story-context id="bmad/bmm/workflows/4-implementation/story-context/template" v="1.0">
+  <metadata>
+    <epicId>1</epicId>
+    <storyId>3</storyId>
+    <title>Add Postgres + Prisma baseline (schema + migrations)</title>
+    <status>drafted</status>
+    <generatedAt>2026-02-28</generatedAt>
+    <generator>BMAD Story Context Workflow</generator>
+    <sourceStoryPath>docs/stories/1-3-add-postgres-prisma-baseline-schema-migrations.md</sourceStoryPath>
+  </metadata>
+
+  <story>
+    <asA>developer</asA>
+    <iWant>Prisma configured against Postgres with an initial schema baseline</iWant>
+    <soThat>we can persist users, candidates, and audit events consistently</soThat>
+    <tasks>
+      <task id="T1">Add Prisma to the repo and initialize <code>prisma/schema.prisma</code> (AC: 1, 5)</task>
+      <task id="T2">Define baseline models (<code>User</code>, <code>AuditEvent</code>) with UUID PKs and mappings (AC: 3, 4)</task>
+      <task id="T3">Add local Postgres connection config via env (<code>DATABASE_URL</code>) and document in <code>.env.example</code> (AC: 1, 5)</task>
+      <task id="T4">Create and run the first migration; verify <code>prisma migrate dev</code> passes in a clean env (AC: 2)</task>
+      <task id="T5">Add a minimal DB connectivity check path (health check or script) (AC: 5)</task>
+    </tasks>
+  </story>
+
+  <acceptanceCriteria>
+    <ac id="1">Prisma is added and configured to connect to local Postgres via environment variables.</ac>
+    <ac id="2"><code>prisma migrate dev</code> succeeds.</ac>
+    <ac id="3">Initial Prisma schema includes at least <code>User</code> and <code>AuditEvent</code> models.</ac>
+    <ac id="4">UUID primary keys are used; DB naming uses snake_case via Prisma mappings.</ac>
+    <ac id="5">App can connect to the database without committing secrets.</ac>
+  </acceptanceCriteria>
+
+  <artifacts>
+    <docs>
+      <doc path="docs/architecture.md" title="Architecture" section="Decision Summary" snippet="Database is PostgreSQL; ORM is Prisma; tables/columns use snake_case mappings; UUID primary keys preferred." />
+      <doc path="docs/architecture.md" title="Architecture" section="Project Structure" snippet="Prisma schema lives under <code>prisma/</code>; Prisma client wrapper expected under <code>src/server/db/prisma.ts</code>." />
+      <doc path="docs/architecture.md" title="Architecture" section="Data Architecture" snippet="User and AuditEvent are foundational models; AuditEvent stores metadata in JSONB and references an actor user id." />
+      <doc path=".env.example" title="Environment Example" section="DATABASE_URL" snippet="DATABASE_URL placeholder exists and should be used for local Postgres connection without committing secrets." />
+      <doc path="docs/tech-spec-epic-1.md" title="Epic Technical Specification" section="Data Models and Contracts" snippet="Defines minimum fields for User and AuditEvent and requires snake_case DB mapping conventions and UUID primary keys." />
+    </docs>
+    <code>
+      <file path="package.json" kind="manifest" symbol="dependencies" lines="1-28" reason="Prisma packages and scripts will be added here." />
+    </code>
+    <dependencies>
+      <note>Prisma CLI and <code>@prisma/client</code> will be added as dependencies. Local Postgres must be available to run migrations.</note>
+    </dependencies>
+  </artifacts>
+
+  <constraints>
+    <constraint>Do not commit secrets; DB connection uses <code>DATABASE_URL</code> from environment and placeholders in <code>.env.example</code> only. (Source: docs/stories/1-3-add-postgres-prisma-baseline-schema-migrations.md#Acceptance Criteria)</constraint>
+    <constraint>Use UUID PKs and snake_case mapping conventions via Prisma <code>@map</code>/<code>@@map</code>. (Source: docs/architecture.md#Consistency Rules)</constraint>
+  </constraints>
+
+  <interfaces>
+    <note>Minimal DB connectivity check may be implemented as a simple script or a lightweight server-side helper importing Prisma client.</note>
+  </interfaces>
+
+  <tests>
+    <standards>Validate by running <code>npx prisma migrate dev</code> against a local Postgres and ensuring the app can import Prisma client without exposing secrets. Keep commands non-interactive in CI where possible.</standards>
+    <locations>
+      <note>Prisma schema at <code>prisma/schema.prisma</code>; migrations under <code>prisma/migrations/</code>.</note>
+    </locations>
+    <ideas>
+      <idea ac="2">Run <code>npx prisma migrate dev</code> to generate and apply the first migration; verify exit code 0.</idea>
+      <idea ac="5">Minimal connectivity check: create a small script that instantiates PrismaClient and runs <code>SELECT 1</code> (or <code>prisma.$queryRaw</code>) using <code>DATABASE_URL</code>.</idea>
+    </ideas>
+  </tests>
+</story-context>
+
