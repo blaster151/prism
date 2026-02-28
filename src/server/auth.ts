@@ -4,6 +4,7 @@ import CredentialsProvider from "next-auth/providers/credentials";
 
 import { prisma } from "@/server/db/prisma";
 
+import { UserStatus } from "@prisma/client";
 import bcrypt from "bcryptjs";
 
 export const authOptions: NextAuthOptions = {
@@ -40,6 +41,7 @@ export const authOptions: NextAuthOptions = {
           return authUser;
         }
 
+        if (user.status !== UserStatus.ACTIVE) return null;
         if (!user.passwordHash) return null;
         const ok = await bcrypt.compare(password, user.passwordHash);
         if (!ok) return null;
