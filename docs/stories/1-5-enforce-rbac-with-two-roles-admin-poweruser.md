@@ -1,6 +1,6 @@
 # Story 1.5: Enforce RBAC with two roles (Admin, PowerUser)
 
-Status: review
+Status: done
 
 ## Story
 
@@ -82,3 +82,67 @@ GPT-5.2
 
 - 2026-02-28: Draft created
 - 2026-02-28: Implemented RBAC helpers + service-layer enforcement; added protected admin API/page; added unit tests; validated test/lint/build; marked ready for review
+- 2026-02-28: Code review approved; marked done
+
+## Senior Developer Review (AI)
+
+### Reviewer
+
+BMad
+
+### Date
+
+2026-02-28
+
+### Outcome
+
+Approve — acceptance criteria are implemented and the RBAC enforcement is verifiable in both service and route layers.
+
+### Summary
+
+Story 1.5 establishes the RBAC enforcement pattern for Prism: a small server-side helper (`requireRole`) based on the `UserRole` enum, a consistent error envelope (`AppError`) used by a protected admin API route, and a service-layer protected admin function (`adminPing`) that UI and API call. Unit tests verify both the helper and the protected service behavior, and the implementation is aligned with the “service layer first” architecture guidance.
+
+### Key Findings
+
+**HIGH**
+
+- None.
+
+**MEDIUM**
+
+- The API error envelope is implemented in-line in `GET /api/admin/ping`; consider centralizing this mapping as more endpoints are added to reduce duplication and drift. (Evidence: `src/app/api/admin/ping/route.ts`)
+
+**LOW**
+
+- The admin page currently displays a safe error message for forbidden access; later, it may be preferable to redirect to a dedicated forbidden page for a more polished UX. (Evidence: `src/app/admin/page.tsx`)
+
+### Acceptance Criteria Coverage
+
+| AC# | Description | Status | Evidence |
+| --- | --- | --- | --- |
+| 1 | POWER_USER denied access to admin-only routes/APIs with clear error | IMPLEMENTED | `src/server/auth/requireRole.ts`, `src/app/api/admin/ping/route.ts`, `src/app/admin/page.tsx` |
+| 2 | ADMIN can access admin routes/APIs | IMPLEMENTED | `src/server/admin/adminService.ts`, `src/app/api/admin/ping/route.ts` |
+| 3 | RBAC enforced in the service layer | IMPLEMENTED | `src/server/admin/adminService.ts` (`adminPing`), `src/server/auth/requireRole.ts` |
+
+**AC Coverage Summary:** 3 of 3 acceptance criteria fully implemented.
+
+### Task Completion Validation
+
+| Task | Marked As | Verified As | Evidence |
+| --- | --- | --- | --- |
+| Define role model in DB/app types | Completed | VERIFIED COMPLETE | `prisma/schema.prisma` (`UserRole`), `src/types/next-auth.d.ts` |
+| Implement RBAC helper(s) in server layer | Completed | VERIFIED COMPLETE | `src/server/auth/rbac.ts`, `src/server/auth/requireRole.ts` |
+| Apply checks to admin route handlers + UI entrypoints | Completed | VERIFIED COMPLETE | `src/app/api/admin/ping/route.ts`, `src/app/admin/page.tsx` |
+| Consistent unauthorized handling | Completed | VERIFIED COMPLETE | `src/lib/errors.ts`, API error response envelope in `src/app/api/admin/ping/route.ts` |
+| Unit tests for RBAC helper + protected route/service | Completed | VERIFIED COMPLETE | `src/server/auth/requireRole.test.ts`, `src/server/admin/adminService.test.ts`, `vitest.config.ts`, `package.json` (`test` script) |
+
+### Test Coverage and Gaps
+
+- Unit tests cover role gating behavior at the helper and service level.
+- E2E coverage for auth-gated flows remains planned for Story 1.8.
+
+### Security Notes
+
+- Forbidden responses use a generic, user-safe message and do not leak sensitive details.
+- RBAC is enforced server-side and cannot be bypassed by client-side routing alone.
+
