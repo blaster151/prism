@@ -10,7 +10,7 @@ vi.mock("@/server/audit/auditLogger", () => ({
 
 describe("adminPing", () => {
   it("returns ok for ADMIN", () => {
-    expect(
+    return expect(
       adminPing({
         user: { id: "u1", email: "a@example.com", role: UserRole.ADMIN },
       }),
@@ -18,7 +18,7 @@ describe("adminPing", () => {
   });
 
   it("throws FORBIDDEN for POWER_USER", () => {
-    expect(
+    return expect(
       adminPing({
         user: { id: "u1", email: "p@example.com", role: UserRole.POWER_USER },
       }),

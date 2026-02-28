@@ -2,12 +2,10 @@ import { describe, expect, it, vi } from "vitest";
 
 import { auditLog } from "@/server/audit/auditLogger";
 
-const createMock = vi.fn(async () => ({ id: "ae1" }));
-
 vi.mock("@/server/db/prisma", () => ({
   prisma: {
     auditEvent: {
-      create: createMock,
+      create: vi.fn(async () => ({ id: "ae1" })),
     },
   },
 }));
@@ -21,7 +19,8 @@ describe("auditLog", () => {
     });
 
     expect(res).toEqual({ id: "ae1" });
-    expect(createMock).toHaveBeenCalledWith(
+    const { prisma } = await import("@/server/db/prisma");
+    expect((prisma.auditEvent.create as any)).toHaveBeenCalledWith(
       expect.objectContaining({
         data: expect.objectContaining({
           actorUserId: "u1",
