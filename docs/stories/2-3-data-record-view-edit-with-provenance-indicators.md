@@ -1,6 +1,6 @@
 # Story 2.3: Data Record view/edit with provenance indicators
 
-Status: review
+Status: done
 
 ## Story
 
@@ -84,3 +84,29 @@ GPT-5.2
 
 - 2026-02-28: Draft created
 - 2026-02-28: Implemented Data Record view/edit with provenance indicators + versioning + audit logging; added tests; validated test/lint/build; marked ready for review
+- 2026-02-28: Code review approved; marked done
+
+## Senior Developer Review (AI)
+
+### Reviewer
+
+BMad
+
+### Date
+
+2026-02-28
+
+### Outcome
+
+Approve — Data Record view/edit is implemented with provenance indicators, service-layer RBAC, audit logging, and version snapshots.
+
+### Acceptance Criteria Coverage
+
+| AC# | Description | Status | Evidence |
+| --- | --- | --- | --- |
+| 1 | Screen shows structured record | IMPLEMENTED | `/candidates/[id]/record`, `src/server/records/dataRecordService.ts` |
+| 2 | Users can edit fields | IMPLEMENTED | `PATCH /api/candidates/[id]/record`, `DataRecordForm` |
+| 3 | Provenance indicators per field | IMPLEMENTED | `DataRecordFieldProvenance` + UI badges |
+| 4 | Edits attributed and versioned | IMPLEMENTED | `DataRecordVersion` created per edit with actorUserId |
+| 5 | Edits audit-logged | IMPLEMENTED | `AuditEventTypes.DataRecordEdit` + `auditLog` |
+
