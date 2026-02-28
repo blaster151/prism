@@ -1,6 +1,6 @@
 # Story 1.8: Testing foundation (unit + Playwright E2E)
 
-Status: in-progress
+Status: review
 
 ## Story
 
@@ -17,11 +17,11 @@ so that each subsequent story can ship with automated coverage and we can run an
 
 ## Tasks / Subtasks
 
-- [ ] Select and configure a lightweight unit/integration test runner for the Next.js codebase (AC: 1)
-- [ ] Add baseline unit test example + CI command (AC: 1, 4)
-- [ ] Install/configure Playwright and add a headless CI run command (AC: 2, 4)
-- [ ] Implement a minimal E2E test covering the auth gate flow (AC: 3)
-- [ ] Document the exact commands in the repo (README or `docs/`) (AC: 1, 2)
+- [x] Select and configure a lightweight unit/integration test runner for the Next.js codebase (AC: 1)
+- [x] Add baseline unit test example + CI command (AC: 1, 4)
+- [x] Install/configure Playwright and add a headless CI run command (AC: 2, 4)
+- [x] Implement a minimal E2E test covering the auth gate flow (AC: 3)
+- [x] Document the exact commands in the repo (README or `docs/`) (AC: 1, 2)
 
 ## Dev Notes
 
@@ -50,10 +50,30 @@ GPT-5.2
 
 ### Debug Log References
 
+2026-02-28:
+- Added Playwright configuration and first E2E test validating auth-gate redirect.
+- Wired CI to run unit tests, lint/build, and headless Playwright.
+- Verified runs are non-interactive (`vitest run`, `playwright test --reporter=line`).
+
 ### Completion Notes List
 
+- ✅ Unit tests: `npm test` (Vitest, non-interactive).
+- ✅ E2E tests: `npm run test:e2e` (Playwright, headless, non-interactive).
+- ✅ First E2E asserts unauthenticated navigation to `/` redirects to `/auth/signin`.
+- ✅ CI runs unit + lint/build + E2E.
+
 ### File List
+
+- NEW: `playwright.config.ts`
+- NEW: `e2e/auth-gate.spec.ts`
+- MODIFIED: `package.json`
+- MODIFIED: `package-lock.json`
+- MODIFIED: `.github/workflows/ci.yml`
+- MODIFIED: `README.md`
+- MODIFIED: `docs/sprint-status.yaml`
+- MODIFIED: `docs/stories/1-8-testing-foundation-unit-playwright-e2e.md`
 
 ## Change Log
 
 - 2026-02-28: Draft created
+- 2026-02-28: Added unit test command + Playwright E2E baseline; added auth-gate E2E; wired CI; documented commands; validated test/lint/build; marked ready for review
