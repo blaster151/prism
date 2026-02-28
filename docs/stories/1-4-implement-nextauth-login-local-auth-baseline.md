@@ -1,6 +1,6 @@
 # Story 1.4: Implement NextAuth login (local auth baseline)
 
-Status: drafted
+Status: ready-for-dev
 
 ## Story
 
@@ -42,7 +42,7 @@ so that access to resumes and candidate data is gated behind a login.
 
 ### Context Reference
 
-<!-- Path(s) to story context XML will be added here by context workflow -->
+- `docs/stories/1-4-implement-nextauth-login-local-auth-baseline.context.xml`
 
 ### Agent Model Used
 

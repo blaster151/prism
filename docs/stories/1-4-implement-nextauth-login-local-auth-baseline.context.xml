@@ -1,0 +1,68 @@
+<story-context id="bmad/bmm/workflows/4-implementation/story-context/template" v="1.0">
+  <metadata>
+    <epicId>1</epicId>
+    <storyId>4</storyId>
+    <title>Implement NextAuth login (local auth baseline)</title>
+    <status>drafted</status>
+    <generatedAt>2026-02-28</generatedAt>
+    <generator>BMAD Story Context Workflow</generator>
+    <sourceStoryPath>docs/stories/1-4-implement-nextauth-login-local-auth-baseline.md</sourceStoryPath>
+  </metadata>
+
+  <story>
+    <asA>user</asA>
+    <iWant>to authenticate into Prism</iWant>
+    <soThat>access to resumes and candidate data is gated behind a login</soThat>
+    <tasks>
+      <task id="T1">Configure NextAuth in App Router at <code>src/app/api/auth/[...nextauth]/route.ts</code> (AC: 1, 2, 3)</task>
+      <task id="T2">Add app-level auth gate / redirect behavior for protected pages (AC: 1, 2)</task>
+      <task id="T3">Store/lookup users in Postgres and attach role data to the session (AC: 4)</task>
+      <task id="T4">Add basic audit events for sign-in/sign-out (ties into audit story if implemented later) (AC: 2)</task>
+    </tasks>
+  </story>
+
+  <acceptanceCriteria>
+    <ac id="1">Unauthenticated users are prompted to sign in when navigating to the app.</ac>
+    <ac id="2">After signing in, users can access the main app pages.</ac>
+    <ac id="3">Authentication state persists across refreshes.</ac>
+    <ac id="4">The implementation supports role lookup from the database (for later RBAC).</ac>
+  </acceptanceCriteria>
+
+  <artifacts>
+    <docs>
+      <doc path="docs/architecture.md" title="Architecture" section="ADR-004: Authentication (initial)" snippet="Use NextAuth.js v4 as initial authentication mechanism; keep boundaries clean for future SSO." />
+      <doc path="docs/architecture.md" title="Architecture" section="Project Structure" snippet="Auth route handler location is <code>src/app/api/auth/[...nextauth]/route.ts</code>; RBAC roles are Admin and PowerUser." />
+      <doc path="docs/PRD.md" title="Product Requirements Document" section="Functional Requirements — Identity, Access, and Administration" snippet="System must require authenticated access; RBAC enforced consistently; admin user management later." />
+      <doc path="prisma/schema.prisma" title="Prisma schema" section="UserRole/User model" snippet="User model exists with email + role fields to support role lookup and later RBAC." />
+    </docs>
+    <code>
+      <file path="prisma/schema.prisma" kind="schema" symbol="User/UserRole" lines="9-28" reason="Role lookup source of truth for session." />
+      <file path="src/server/db/prisma.ts" kind="service" symbol="prisma" lines="1-21" reason="DB access layer used by auth implementation." />
+    </code>
+    <dependencies>
+      <note>NextAuth v4 will be added as a dependency; auth gate may use NextAuth JWT helpers/middleware.</note>
+    </dependencies>
+  </artifacts>
+
+  <constraints>
+    <constraint>Auth must be enforced for app pages; unauthenticated users should be redirected to sign-in. (Source: docs/stories/1-4-implement-nextauth-login-local-auth-baseline.md#Acceptance Criteria)</constraint>
+    <constraint>Session should include user role derived from DB to enable later RBAC enforcement. (Source: docs/architecture.md#ADR-005: Authorization (RBAC) and role model)</constraint>
+    <constraint>No secrets committed; use <code>NEXTAUTH_SECRET</code> and other auth env vars via environment. (Source: .env.example)</constraint>
+  </constraints>
+
+  <interfaces>
+    <note>Primary interface is NextAuth route handler and sign-in UI route; no external API integration required for baseline local auth.</note>
+  </interfaces>
+
+  <tests>
+    <standards>Validate via <code>npm run lint</code> and <code>npm run build</code>. E2E auth gate coverage is introduced in Story 1.8.</standards>
+    <locations>
+      <note>Auth route handler under <code>src/app/api/auth/[...nextauth]/route.ts</code>.</note>
+    </locations>
+    <ideas>
+      <idea ac="1">Unauthenticated navigation to <code>/</code> redirects to <code>/auth/signin</code>.</idea>
+      <idea ac="3">After sign-in, refresh preserves session.</idea>
+    </ideas>
+  </tests>
+</story-context>
+
