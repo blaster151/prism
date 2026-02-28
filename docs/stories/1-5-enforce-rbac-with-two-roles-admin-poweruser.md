@@ -1,6 +1,6 @@
 # Story 1.5: Enforce RBAC with two roles (Admin, PowerUser)
 
-Status: ready-for-dev
+Status: in-progress
 
 ## Story
 
