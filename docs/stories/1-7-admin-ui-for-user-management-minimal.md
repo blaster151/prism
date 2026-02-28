@@ -1,6 +1,6 @@
 # Story 1.7: Admin UI for user management (minimal)
 
-Status: review
+Status: done
 
 ## Story
 
@@ -82,3 +82,60 @@ GPT-5.2
 
 - 2026-02-28: Draft created
 - 2026-02-28: Implemented minimal admin user management UI + APIs with RBAC and audit logging; added tests; validated test/lint/build; marked ready for review
+- 2026-02-28: Code review approved; marked done
+
+## Senior Developer Review (AI)
+
+### Reviewer
+
+BMad
+
+### Date
+
+2026-02-28
+
+### Outcome
+
+Approve — acceptance criteria met with RBAC-enforced APIs, audit logging for role changes, and minimal correct UX.
+
+### Summary
+
+Story 1.7 delivers a minimal admin user-management screen at `/admin` that lists users and allows role changes between `ADMIN` and `POWER_USER`. The underlying operations are implemented in a server-side service (`usersService`) that enforces RBAC via `requireRole`, and the role-update operation writes an `audit_event` using the shared audit logger with an explicit event type (`admin.user.role_change`) and safe metadata. Tests validate RBAC denial and audit logging behavior.
+
+### Key Findings
+
+**HIGH**
+
+- None.
+
+**MEDIUM**
+
+- Admin API route handlers duplicate the same error envelope mapping logic; consider extracting a small helper for consistency as more admin endpoints are added. (Evidence: `src/app/api/admin/users/route.ts`, `src/app/api/admin/users/[id]/role/route.ts`)
+
+**LOW**
+
+- UX is intentionally minimal; later iterations may add optimistic UI with rollback and clearer per-row error messages, but current behavior is correct and safe. (Evidence: `src/app/admin/UserRoleSelect.tsx`)
+
+### Acceptance Criteria Coverage
+
+| AC# | Description | Status | Evidence |
+| --- | --- | --- | --- |
+| 1 | Admin can view users and set role | IMPLEMENTED | `src/app/admin/page.tsx`, `src/server/admin/usersService.ts`, `GET /api/admin/users`, `PATCH /api/admin/users/:id/role` |
+| 2 | Role changes are audit-logged | IMPLEMENTED | `src/server/admin/usersService.ts` (`auditLog` in transaction), `src/server/audit/eventTypes.ts` |
+| 3 | UX minimal but correct | IMPLEMENTED | `src/app/admin/UserRoleSelect.tsx` success/error feedback; forbidden access shows safe error |
+
+### Task Completion Validation
+
+| Task | Marked As | Verified As | Evidence |
+| --- | --- | --- | --- |
+| Admin page gated by RBAC | Completed | VERIFIED COMPLETE | `/admin` uses `adminPing` and safe error rendering (`src/app/admin/page.tsx`) |
+| List-users + update-role services/APIs | Completed | VERIFIED COMPLETE | `src/server/admin/usersService.ts`, `src/app/api/admin/users/*` |
+| RBAC + audit_event on updates | Completed | VERIFIED COMPLETE | `requireRole` in service; `auditLog` in `$transaction` |
+| UI feedback | Completed | VERIFIED COMPLETE | `src/app/admin/UserRoleSelect.tsx` |
+| Tests for role update RBAC + audit write | Completed | VERIFIED COMPLETE | `src/server/admin/usersService.test.ts` |
+
+### Security Notes
+
+- Role changes are enforced server-side (service layer) and cannot be bypassed by client-side UI manipulation.
+- Audit metadata avoids sensitive fields (no email/password content), focusing on role transition + entity pointer.
+
