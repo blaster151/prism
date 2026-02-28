@@ -18,6 +18,10 @@ const eslintConfig = [
       "out/**",
       "build/**",
       "next-env.d.ts",
+      "bmad/**",
+      ".cursor/**",
+      "docs/**",
+      ".github/**",
     ],
   },
 ];
