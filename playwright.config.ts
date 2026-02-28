@@ -20,6 +20,11 @@ export default defineConfig({
     : {
         command: "npm run dev -- --port 3000",
         url: "http://127.0.0.1:3000",
+        env: {
+          NEXTAUTH_URL: "http://127.0.0.1:3000",
+          NEXTAUTH_SECRET: "test-secret",
+          PRISM_ALLOW_USER_CREATE: "false",
+        },
         reuseExistingServer: !process.env.CI,
         timeout: 120_000,
       },

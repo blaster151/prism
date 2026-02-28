@@ -27,4 +27,6 @@ jobs:
       - name: E2E tests (Playwright)
         env:
           CI: "true"
+          NEXTAUTH_URL: "http://127.0.0.1:3000"
+          NEXTAUTH_SECRET: "test-secret"
         run: npm run test:e2e
