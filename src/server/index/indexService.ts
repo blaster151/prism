@@ -69,56 +69,20 @@ export async function runIndexForCandidate(args: {
   const embeddingVersion = 1;
   const vector = deterministicEmbeddingVector(ftsText);
 
-  await (typeof (client as PrismaClient).$transaction === "function"
-    ? (client as PrismaClient).$transaction(async (tx) => {
-        await tx.candidateSearchDocument.upsert({
-          where: { candidateId: args.candidateId },
-          create: { candidateId: args.candidateId, ftsText },
-          update: { ftsText },
-          select: { id: true },
-        });
-
-        await tx.embedding.deleteMany({
-          where: {
-            candidateId: args.candidateId,
-            model: embeddingModel,
-            version: embeddingVersion,
-          },
-        });
-        await tx.embedding.create({
-          data: {
-            candidateId: args.candidateId,
-            model: embeddingModel,
-            version: embeddingVersion,
-            vector: vector as unknown as Prisma.InputJsonValue,
-          },
-          select: { id: true },
-        });
-
-        await auditLog(
-          {
-            actorUserId: args.actorUserId,
-            eventType: AuditEventTypes.IndexRun,
-            entityType: "candidate",
-            entityId: args.candidateId,
-            metadata: { recordId: record?.id ?? null, ftsCharCount: ftsText.length, model: embeddingModel },
-          },
-          { tx },
-        );
-      })
-    : Promise.resolve());
-
-  // If client is a TransactionClient (already inside tx), apply without nesting.
-  if (typeof (client as PrismaClient).$transaction !== "function") {
-    const tx = client as Prisma.TransactionClient;
+  async function applyIndexUpdates(tx: Prisma.TransactionClient) {
     await tx.candidateSearchDocument.upsert({
       where: { candidateId: args.candidateId },
       create: { candidateId: args.candidateId, ftsText },
       update: { ftsText },
       select: { id: true },
     });
+
     await tx.embedding.deleteMany({
-      where: { candidateId: args.candidateId, model: embeddingModel, version: embeddingVersion },
+      where: {
+        candidateId: args.candidateId,
+        model: embeddingModel,
+        version: embeddingVersion,
+      },
     });
     await tx.embedding.create({
       data: {
@@ -129,6 +93,7 @@ export async function runIndexForCandidate(args: {
       },
       select: { id: true },
     });
+
     await auditLog(
       {
         actorUserId: args.actorUserId,
@@ -139,6 +104,14 @@ export async function runIndexForCandidate(args: {
       },
       { tx },
     );
+  }
+
+  // If client supports $transaction we're at the top level — wrap in a tx.
+  // Otherwise client is already a TransactionClient — use it directly.
+  if (typeof (client as PrismaClient).$transaction === "function") {
+    await (client as PrismaClient).$transaction(applyIndexUpdates);
+  } else {
+    await applyIndexUpdates(client as Prisma.TransactionClient);
   }
 
   return { ok: true, candidateId: args.candidateId, ftsCharCount: ftsText.length, embeddingModel };

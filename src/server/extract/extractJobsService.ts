@@ -4,15 +4,9 @@ import { requireRole } from "@/server/auth/requireRole";
 import { UserRole } from "@/server/auth/rbac";
 
 import { getExtractQueueSingleton } from "./extractQueue";
+import { type NormalizedJobState, normalizeJobState as normalizeState } from "@/lib/jobTypes";
 
-export type NormalizedJobState = "queued" | "running" | "succeeded" | "failed";
-
-function normalizeState(state: string): NormalizedJobState {
-  if (state === "completed") return "succeeded";
-  if (state === "failed") return "failed";
-  if (state === "active") return "running";
-  return "queued";
-}
+export type { NormalizedJobState };
 
 export async function getExtractJobStatus(args: {
   session: Session | null;

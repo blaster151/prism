@@ -194,6 +194,8 @@ export async function runExtractionForResumeDocument(args: {
     return { recordId: record.id, appliedFields: appliedFieldNames, stagedCount: staged.length };
   };
 
+  // If client supports $transaction we're at the top level — wrap in a tx.
+  // Otherwise client is already a TransactionClient — use it directly.
   const result =
     typeof (client as PrismaClient).$transaction === "function"
       ? await (client as PrismaClient).$transaction(runInTx)

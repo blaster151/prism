@@ -4,6 +4,7 @@ import http from "node:http";
 import { QueueNames, createRedisConnectionOptions } from "./queues";
 import { runOcrForResumeDocument } from "@/server/ocr/ocrService";
 import { runExtractionForResumeDocument } from "@/server/extract/extractService";
+import { runIndexForCandidate } from "@/server/index/indexService";
 import { prisma } from "@/server/db/prisma";
 
 const port = Number.parseInt(process.env.PORT || "8080", 10);
@@ -65,6 +66,18 @@ export function startWorker() {
     { connection, concurrency: 1 },
   );
 
+  const indexWorker = new Worker(
+    QueueNames.IndexCandidate,
+    async (job) => {
+      const data = job.data as unknown as { candidateId: string };
+      return await runIndexForCandidate({
+        candidateId: data.candidateId,
+        opts: { tx: prisma },
+      });
+    },
+    { connection, concurrency: 1 },
+  );
+
   const server = http.createServer((req, res) => {
     if (req.url === "/healthz") {
       res.writeHead(200, { "content-type": "text/plain; charset=utf-8" });
@@ -79,7 +92,7 @@ export function startWorker() {
     console.log(`prism-worker listening on :${port}`);
   });
 
-  for (const w of [testWorker, ingestWorker, ocrWorker, extractWorker]) {
+  for (const w of [testWorker, ingestWorker, ocrWorker, extractWorker, indexWorker]) {
     w.on("completed", (job) => {
       console.log(`job completed: ${job.id}`);
     });
@@ -88,6 +101,6 @@ export function startWorker() {
     });
   }
 
-  return { workers: [testWorker, ingestWorker, ocrWorker, extractWorker], server };
+  return { workers: [testWorker, ingestWorker, ocrWorker, extractWorker, indexWorker], server };
 }
 
