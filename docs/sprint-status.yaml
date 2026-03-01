@@ -61,7 +61,7 @@ development_status:
   3-4-job-status-ui-ingestion-pipeline-visibility: done
   3-5-document-ocr-step-document-ai-behind-provider-interface: done
   3-6-extraction-step-llm-over-extracted-text-with-provenance-staging: done
-  3-7-index-update-job-embeddings-fts-on-record-changes: review
+  3-7-index-update-job-embeddings-fts-on-record-changes: done
   3-8-playwright-e2e-ingest-trigger-status-visible: drafted
   epic-3-retrospective: optional
 

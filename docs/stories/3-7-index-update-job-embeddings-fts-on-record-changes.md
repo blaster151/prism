@@ -1,6 +1,6 @@
 # Story 3.7: Index update job (embeddings + FTS) on record changes
 
-Status: review
+Status: done
 
 ## Story
 
@@ -72,4 +72,15 @@ GPT-5.2
 
 - 2026-03-01: Draft created
  - 2026-03-01: Implemented indexing job (embeddings + FTS) on record changes with idempotent rebuild + retries; marked for review
+ - 2026-03-01: Code review approved; story complete
+
+## Senior Developer Review (AI)
+
+### Review Outcome
+
+Approve ✅
+
+### Notes / Follow-ups
+
+- Embedding generation is currently a deterministic placeholder (model `deterministic-v0`). Replacing it with real embeddings later should only require swapping the vector generation logic (and potentially schema changes for pgvector) without changing job semantics.
 
