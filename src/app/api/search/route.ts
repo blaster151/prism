@@ -7,6 +7,7 @@ import { isAppError } from "@/lib/errors";
 import { requireRole } from "@/server/auth/requireRole";
 import { UserRole } from "@/server/auth/rbac";
 import { hybridSearch } from "@/server/search/hybridSearch";
+import { explainResults } from "@/server/search/explainService";
 import { auditLog } from "@/server/audit/auditLogger";
 import { AuditEventTypes } from "@/server/audit/eventTypes";
 
@@ -36,10 +37,16 @@ export async function POST(req: Request) {
     const body: unknown = await req.json();
     const parsed = SearchRequestSchema.parse(body);
 
-    const { results } = await hybridSearch({
+    const { results: rawResults } = await hybridSearch({
       query: parsed.query,
       filters: parsed.filters,
       limit: parsed.limit,
+    });
+
+    // Generate grounded explanations for each result
+    const results = await explainResults({
+      query: parsed.query,
+      results: rawResults,
     });
 
     // Audit log — non-sensitive metadata only (never raw query text)
@@ -52,6 +59,17 @@ export async function POST(req: Request) {
         resultCount: results.length,
         lifecycleFilter: parsed.filters?.lifecycleState ?? "ACTIVE",
         limit: parsed.limit,
+      },
+    });
+
+    // Audit log explanation generation (non-sensitive metadata only)
+    await auditLog({
+      actorUserId: session?.user?.id,
+      eventType: AuditEventTypes.SearchExplain,
+      entityType: "search",
+      metadata: {
+        candidateCount: results.length,
+        evidenceCounts: results.map((r) => r.explanation?.evidence.length ?? 0),
       },
     });
 

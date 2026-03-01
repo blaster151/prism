@@ -4,8 +4,28 @@
 // ---------------------------------------------------------------------------
 
 /**
+ * Evidence item grounding an explanation in a concrete DataRecord field
+ * or resume text span. Every item MUST reference data that actually exists.
+ */
+export interface EvidenceItem {
+  field: string;                // DataRecord field name (e.g., "skills", "clearance")
+  snippet?: string;             // highlighted text from resume/record
+  source: "record" | "resume";
+  sourceDocumentId?: string;    // resume document ID when source is "resume"
+}
+
+/**
+ * Explanation for why a candidate matched a search query.
+ * Must be grounded — the system never claims evidence it cannot point to.
+ */
+export interface Explanation {
+  summary: string;              // 1–2 sentence "why matched"
+  evidence: EvidenceItem[];
+}
+
+/**
  * A single ranked search result.
- * `explanation` is a stub in Story 4.3 — populated by explainService in Story 4.5.
+ * `explanation` is populated by explainService (Story 4.5).
  */
 export interface SearchResult {
   candidateId: string;
@@ -13,6 +33,7 @@ export interface SearchResult {
   score: number;            // 0–1 combined relevance
   semanticScore: number;    // pgvector cosine similarity component (0–1)
   lexicalScore: number;     // FTS rank component (0–1 normalized)
+  explanation?: Explanation; // populated by explainService; absent if not generated
 }
 
 export interface SearchFilters {

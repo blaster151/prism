@@ -69,8 +69,8 @@ development_status:
   4-1-define-embedding-strategy-and-data-plumbing-pgvector-model-metadata: done
   4-2-implement-embedding-generation-service-llm-provider-pluggable: done
   4-3-build-hybrid-search-api-pgvector-postgres-fts-filters: done
-  4-4-search-ui-results-list-with-rank-explanation-summary: backlog
-  4-5-evidence-linked-explainability-data-record-fields-resume-spans: backlog
+  4-4-search-ui-results-list-with-rank-explanation-summary: done
+  4-5-evidence-linked-explainability-data-record-fields-resume-spans: done
   4-6-iterative-refinement-context-preserved-across-prompts: backlog
   4-7-unit-integration-tests-for-hybrid-search-explainability-grounding: backlog
   4-8-playwright-e2e-search-returns-ranked-results-with-explanations: backlog
