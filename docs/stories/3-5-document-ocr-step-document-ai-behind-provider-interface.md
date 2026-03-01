@@ -1,6 +1,6 @@
 # Story 3.5: Document OCR step (Document AI) behind provider interface
 
-Status: drafted
+Status: ready-for-dev
 
 ## Story
 
@@ -37,7 +37,7 @@ so that scanned PDFs can be converted to text in a pluggable way.
 
 ### Context Reference
 
-<!-- Path(s) to story context XML will be added here by context workflow -->
+- `docs/stories/3-5-document-ocr-step-document-ai-behind-provider-interface.context.xml`
 
 ### Agent Model Used
 
