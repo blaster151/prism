@@ -1,6 +1,6 @@
 # Story 3.2: Dropbox client integration (least-privilege)
 
-Status: review
+Status: done
 
 ## Story
 
@@ -79,4 +79,17 @@ GPT-5.2
 
 - 2026-03-01: Draft created
  - 2026-03-01: Implemented Dropbox client integration + root listing API, safe error handling, audit logging, and tests; marked for review
+ - 2026-03-01: Code review approved; story complete
+
+## Senior Developer Review (AI)
+
+### Review Outcome
+
+Approve ✅
+
+### Notes
+
+- **Least-privilege boundary** is enforced operationally (scoped Dropbox token) and technically (client isolated in `src/server/dropbox/*`, token never logged).
+- **Audit logging** is in place for user-triggered list actions via `dropbox.list_folder`.
+- **Errors** are normalized to avoid leaking sensitive info.
 
