@@ -33,6 +33,12 @@ enum DataProvenanceSource {
   USER_EDITED
 }
 
+enum ExtractionSuggestionStatus {
+  PENDING
+  APPLIED
+  REJECTED
+}
+
 enum ShortlistItemState {
   PINNED
   KEPT
@@ -68,6 +74,7 @@ model Candidate {
   dataRecord      DataRecord?
   embeddings      Embedding[]
   shortlistItems  ShortlistItem[]
+  extractionSuggestions ExtractionSuggestion[]
 
   @@index([lifecycleState])
   @@map("candidate")
@@ -87,10 +94,33 @@ model ResumeDocument {
 
   candidate   Candidate                  @relation(fields: [candidateId], references: [id], onDelete: Cascade)
   provenances DataRecordFieldProvenance[] @relation("ProvenanceSourceDocument")
+  extractionSuggestions ExtractionSuggestion[]
 
   @@index([candidateId])
   @@index([dropboxPath])
   @@map("resume_document")
+}
+
+model ExtractionSuggestion {
+  id              String                     @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  resumeDocumentId String                    @db.Uuid @map("resume_document_id")
+  candidateId     String                     @db.Uuid @map("candidate_id")
+  fieldName       String                     @map("field_name")
+  existingValue   String?                    @db.Text @map("existing_value")
+  suggestedValue  String                     @db.Text @map("suggested_value")
+  source          DataProvenanceSource       @map("source")
+  status          ExtractionSuggestionStatus @default(PENDING) @map("status")
+  createdAt       DateTime                   @default(now()) @map("created_at")
+  updatedAt       DateTime                   @updatedAt @map("updated_at")
+
+  resumeDocument ResumeDocument @relation(fields: [resumeDocumentId], references: [id], onDelete: Cascade)
+  candidate      Candidate      @relation(fields: [candidateId], references: [id], onDelete: Cascade)
+
+  @@index([resumeDocumentId])
+  @@index([candidateId])
+  @@index([status])
+  @@unique([resumeDocumentId, fieldName, status])
+  @@map("extraction_suggestion")
 }
 
 model DataRecord {

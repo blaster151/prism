@@ -5,6 +5,7 @@ export const QueueNames = {
   TestNoop: "test-noop",
   IngestDropbox: "ingest-dropbox",
   OcrResume: "ocr-resume",
+  ExtractResume: "extract-resume",
 } as const;
 
 export type QueueName = (typeof QueueNames)[keyof typeof QueueNames];
@@ -65,6 +66,19 @@ export function getOcrQueue() {
     defaultJobOptions: {
       attempts: 4,
       backoff: { type: "exponential", delay: 5_000 },
+      removeOnComplete: 200,
+      removeOnFail: 200,
+    },
+  });
+}
+
+export function getExtractQueue() {
+  const connection = createRedisConnectionOptions();
+  return new Queue(QueueNames.ExtractResume, {
+    connection,
+    defaultJobOptions: {
+      attempts: 4,
+      backoff: { type: "exponential", delay: 10_000 },
       removeOnComplete: 200,
       removeOnFail: 200,
     },

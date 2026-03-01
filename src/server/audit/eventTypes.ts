@@ -9,6 +9,8 @@ export const AuditEventTypes = {
   IngestionTrigger: "ingestion.trigger",
   IngestionRetry: "ingestion.retry",
   OcrRun: "ocr.run",
+  ExtractRun: "extract.run",
+  ExtractApply: "extract.apply",
 } as const;
 
 export type AuditEventType =

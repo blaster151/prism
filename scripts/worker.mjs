@@ -60,6 +60,18 @@ const ocrWorker = new Worker(
   { connection, concurrency: 1 },
 );
 
+const extractWorker = new Worker(
+  "extract-resume",
+  async (job) => {
+    const { resumeDocumentId } = job.data || {};
+    if (!resumeDocumentId) {
+      throw new Error("missing resumeDocumentId");
+    }
+    return await postJson("/api/internal/extract/run", { resumeDocumentId });
+  },
+  { connection, concurrency: 1 },
+);
+
 const server = http.createServer((req, res) => {
   if (req.url === "/healthz") {
     res.writeHead(200, { "content-type": "text/plain; charset=utf-8" });
@@ -85,6 +97,13 @@ ocrWorker.on("completed", (job) => {
   console.log(`job completed: ${job.id}`);
 });
 ocrWorker.on("failed", (job, err) => {
+  console.log(`job failed: ${job?.id} ${err?.message ?? "unknown"}`);
+});
+
+extractWorker.on("completed", (job) => {
+  console.log(`job completed: ${job.id}`);
+});
+extractWorker.on("failed", (job, err) => {
   console.log(`job failed: ${job?.id} ${err?.message ?? "unknown"}`);
 });
 
