@@ -1,6 +1,6 @@
 # Story 3.3: Resume ingestion trigger API (enqueue ingest job)
 
-Status: review
+Status: done
 
 ## Story
 
@@ -71,4 +71,16 @@ GPT-5.2
 
 - 2026-03-01: Draft created
  - 2026-03-01: Implemented ingestion trigger API + enqueue service, audit logging, and tests; marked for review
+ - 2026-03-01: Code review approved; story complete
+
+## Senior Developer Review (AI)
+
+### Review Outcome
+
+Approve ✅
+
+### Notes
+
+- **AC1** satisfied via `POST /api/ingestion/trigger` returning a BullMQ job id for authenticated PowerUsers.
+- **AC2** satisfied via audit event `ingestion.trigger` written in the service layer.
 
