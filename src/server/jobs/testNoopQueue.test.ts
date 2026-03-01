@@ -18,7 +18,7 @@ vi.mock("bullmq", () => ({
 
 vi.mock("@/jobs/queues", () => ({
   QueueNames: { TestNoop: "test-noop" },
-  createRedisConnection: vi.fn(() => ({})),
+  createRedisConnectionOptions: vi.fn(() => ({})),
 }));
 
 import { enqueueTestNoopJob, getTestNoopJobStatus } from "./testNoopQueue";

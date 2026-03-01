@@ -1,17 +1,16 @@
 import { Queue } from "bullmq";
 import type { JobsOptions } from "bullmq";
 
-import { QueueNames, createRedisConnection } from "@/jobs/queues";
+import { QueueNames, createRedisConnectionOptions } from "@/jobs/queues";
 
 declare global {
-  // eslint-disable-next-line no-var
   var __prism_testNoopQueue: Queue | undefined;
 }
 
 export function getTestNoopQueueSingleton() {
   if (globalThis.__prism_testNoopQueue) return globalThis.__prism_testNoopQueue;
 
-  const connection = createRedisConnection();
+  const connection = createRedisConnectionOptions();
   const queue = new Queue(QueueNames.TestNoop, {
     connection,
     defaultJobOptions: {

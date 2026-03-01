@@ -1,5 +1,5 @@
 import { Queue } from "bullmq";
-import IORedis from "ioredis";
+import type { ConnectionOptions } from "bullmq";
 
 export const QueueNames = {
   TestNoop: "test-noop",
@@ -7,18 +7,31 @@ export const QueueNames = {
 
 export type QueueName = (typeof QueueNames)[keyof typeof QueueNames];
 
-export function createRedisConnection() {
+export function createRedisConnectionOptions(): ConnectionOptions {
   const url = process.env.REDIS_URL;
   if (!url) {
     throw new Error("Missing required env var: REDIS_URL");
   }
-  return new IORedis(url, {
+
+  const u = new URL(url);
+  const port = u.port ? Number.parseInt(u.port, 10) : 6379;
+  const db =
+    u.pathname && u.pathname !== "/"
+      ? Number.parseInt(u.pathname.replace("/", ""), 10)
+      : undefined;
+
+  return {
+    host: u.hostname,
+    port,
+    username: u.username || undefined,
+    password: u.password || undefined,
+    db: Number.isFinite(db as number) ? (db as number) : undefined,
     maxRetriesPerRequest: null,
-  });
+  };
 }
 
 export function getTestNoopQueue() {
-  const connection = createRedisConnection();
+  const connection = createRedisConnectionOptions();
   return new Queue(QueueNames.TestNoop, {
     connection,
     defaultJobOptions: {

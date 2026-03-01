@@ -1,12 +1,12 @@
 import { Worker } from "bullmq";
 import http from "node:http";
 
-import { QueueNames, createRedisConnection } from "./queues";
+import { QueueNames, createRedisConnectionOptions } from "./queues";
 
 const port = Number.parseInt(process.env.PORT || "8080", 10);
 
 export function startWorker() {
-  const connection = createRedisConnection();
+  const connection = createRedisConnectionOptions();
 
   const worker = new Worker(
     QueueNames.TestNoop,
