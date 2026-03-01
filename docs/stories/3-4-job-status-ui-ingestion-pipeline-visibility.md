@@ -1,6 +1,6 @@
 # Story 3.4: Job status UI (ingestion pipeline visibility)
 
-Status: review
+Status: done
 
 ## Story
 
@@ -77,4 +77,16 @@ GPT-5.2
 
 - 2026-03-01: Draft created
  - 2026-03-01: Implemented ingestion job status APIs + `/ingestion` UI with retry + audit logging; marked for review
+ - 2026-03-01: Code review approved; story complete
+
+## Senior Developer Review (AI)
+
+### Review Outcome
+
+Approve ✅
+
+### Notes / Follow-ups
+
+- UI is intentionally minimal; further UX polish (filters, details panels) can land in later Epic 3 stories.
+- Retry is RBAC-gated and audit-logged (`ingestion.retry`), meeting AC2/AC3.
 
