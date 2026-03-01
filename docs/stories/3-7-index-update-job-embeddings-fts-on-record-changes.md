@@ -1,6 +1,6 @@
 # Story 3.7: Index update job (embeddings + FTS) on record changes
 
-Status: drafted
+Status: ready-for-dev
 
 ## Story
 
@@ -34,7 +34,7 @@ so that the meaning-based discovery loop stays current.
 
 ### Context Reference
 
-<!-- Path(s) to story context XML will be added here by context workflow -->
+- `docs/stories/3-7-index-update-job-embeddings-fts-on-record-changes.context.xml`
 
 ### Agent Model Used
 
