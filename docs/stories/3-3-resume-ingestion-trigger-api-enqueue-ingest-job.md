@@ -1,6 +1,6 @@
 # Story 3.3: Resume ingestion trigger API (enqueue ingest job)
 
-Status: drafted
+Status: ready-for-dev
 
 ## Story
 
@@ -38,7 +38,7 @@ so that new/updated resumes can be processed into Data Records.
 
 ### Context Reference
 
-<!-- Path(s) to story context XML will be added here by context workflow -->
+- `docs/stories/3-3-resume-ingestion-trigger-api-enqueue-ingest-job.context.xml`
 
 ### Agent Model Used
 
