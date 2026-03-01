@@ -1,6 +1,6 @@
 # Story 3.3: Resume ingestion trigger API (enqueue ingest job)
 
-Status: ready-for-dev
+Status: review
 
 ## Story
 
@@ -15,10 +15,10 @@ so that new/updated resumes can be processed into Data Records.
 
 ## Tasks / Subtasks
 
-- [ ] Implement ingestion trigger route handler (AC: 1)
-- [ ] Add service-layer method that validates request, enqueues job, and returns job id (AC: 1)
-- [ ] Enforce RBAC + audit log in the service layer (AC: 2)
-- [ ] Add tests (mocks/stubs only; no external calls) (AC: 1-2)
+- [x] Implement ingestion trigger route handler (AC: 1)
+- [x] Add service-layer method that validates request, enqueues job, and returns job id (AC: 1)
+- [x] Enforce RBAC + audit log in the service layer (AC: 2)
+- [x] Add tests (mocks/stubs only; no external calls) (AC: 1-2)
 
 ## Dev Notes
 
@@ -46,11 +46,29 @@ GPT-5.2
 
 ### Debug Log References
 
+2026-03-01:
+- Added ingestion trigger endpoint `POST /api/ingestion/trigger` that enqueues a BullMQ job and returns the job id.
+- Implemented service layer `enqueueDropboxIngest` with RBAC (PowerUser) + audit logging (`ingestion.trigger`).
+- Wired ingestion queue name (`ingest-dropbox`) and added placeholder worker processor.
+- Verified `npm test`, `npm run lint`, and `npm run build` pass.
+
 ### Completion Notes List
 
+ - ✅ Authenticated PowerUser can enqueue ingestion and receive a job id.
+ - ✅ Trigger action is audit-logged.
+ - ✅ Tests are mocked/stubbed (no Redis/Dropbox network calls required).
+
 ### File List
+
+ - NEW: `src/app/api/ingestion/trigger/route.ts`
+ - NEW: `src/server/ingestion/ingestionService.ts`
+ - NEW: `src/server/ingestion/ingestionService.test.ts`
+ - MODIFIED: `src/jobs/queues.ts`
+ - MODIFIED: `src/jobs/worker.ts`
+ - MODIFIED: `src/server/audit/eventTypes.ts`
 
 ## Change Log
 
 - 2026-03-01: Draft created
+ - 2026-03-01: Implemented ingestion trigger API + enqueue service, audit logging, and tests; marked for review
 
