@@ -1,11 +1,12 @@
 import type { Session } from "next-auth";
 
 import { AppError } from "@/lib/errors";
-import { getIngestDropboxQueue } from "@/jobs/queues";
 import { auditLog } from "@/server/audit/auditLogger";
 import { AuditEventTypes } from "@/server/audit/eventTypes";
 import { requireRole } from "@/server/auth/requireRole";
 import { UserRole } from "@/server/auth/rbac";
+
+import { getIngestDropboxQueueSingleton } from "./ingestionQueue";
 
 export type IngestionSource = "dropbox";
 
@@ -36,7 +37,7 @@ export async function enqueueDropboxIngest(args: EnqueueDropboxIngestArgs) {
     });
   }
 
-  const queue = getIngestDropboxQueue();
+  const queue = getIngestDropboxQueueSingleton();
   const job = await queue.add("ingest-dropbox", { dropboxPath });
 
   await auditLog({
