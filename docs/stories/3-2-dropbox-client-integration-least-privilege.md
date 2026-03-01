@@ -1,6 +1,6 @@
 # Story 3.2: Dropbox client integration (least-privilege)
 
-Status: drafted
+Status: ready-for-dev
 
 ## Story
 
@@ -41,7 +41,7 @@ so that Prism can read resume files from the repository securely.
 
 ### Context Reference
 
-<!-- Path(s) to story context XML will be added here by context workflow -->
+- `docs/stories/3-2-dropbox-client-integration-least-privilege.context.xml`
 
 ### Agent Model Used
 

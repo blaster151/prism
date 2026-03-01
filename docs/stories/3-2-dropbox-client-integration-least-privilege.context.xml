@@ -1,0 +1,32 @@
+<story-context id="bmad/bmm/workflows/4-implementation/story-context/template" v="1.0">
+  <metadata>
+    <epicId>3</epicId>
+    <storyId>2</storyId>
+    <title>Dropbox client integration (least-privilege)</title>
+    <status>drafted</status>
+    <generatedAt>2026-03-01</generatedAt>
+    <generator>BMAD Story Context Workflow</generator>
+    <sourceStoryPath>docs/stories/3-2-dropbox-client-integration-least-privilege.md</sourceStoryPath>
+  </metadata>
+
+  <story>
+    <asA>developer</asA>
+    <iWant>a Dropbox integration client with clear configuration boundaries</iWant>
+    <soThat>Prism can read resume files from the repository securely</soThat>
+  </story>
+
+  <acceptanceCriteria>
+    <ac id="1">Given Dropbox credentials configured via env, listing a configured folder enumerates resume files and retrieves metadata.</ac>
+    <ac id="2">Access tokens are never logged.</ac>
+    <ac id="3">Dropbox failures are handled gracefully and audit-logged when user-triggered.</ac>
+  </acceptanceCriteria>
+
+  <artifacts>
+    <code>
+      <file path=".env.example" kind="config" symbol="DROPBOX_ACCESS_TOKEN" reason="Credential boundary; must not be logged." />
+      <file path="src/server/audit/auditLogger.ts" kind="service" symbol="auditLog" reason="Audit logging for user-triggered Dropbox actions." />
+      <file path="src/lib/errors.ts" kind="utility" symbol="AppError" reason="Safe, structured error responses without leaking tokens." />
+    </code>
+  </artifacts>
+</story-context>
+
