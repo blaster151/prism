@@ -3,6 +3,7 @@ import { UserRole } from "@/server/auth/rbac";
 import { requireRole, type SessionUser } from "@/server/auth/requireRole";
 import { auditLog } from "@/server/audit/auditLogger";
 import { AuditEventTypes } from "@/server/audit/eventTypes";
+import { enqueueCandidateIndex } from "@/server/index/enqueueIndex";
 
 import type { Prisma } from "@prisma/client";
 import { DataProvenanceSource } from "@prisma/client";
@@ -175,6 +176,10 @@ export async function updateCandidateRecord(args: {
 
     return { recordId: record.id, version: nextVersion, changedFields: changed };
   });
+
+  if (result.changedFields.length > 0) {
+    await enqueueCandidateIndex({ candidateId: args.candidateId });
+  }
 
   return result;
 }

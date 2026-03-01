@@ -12,6 +12,8 @@ import { prisma } from "@/server/db/prisma";
 import { getExtractProvider } from "./provider";
 import { computeExtractionChanges } from "./extractionLogic";
 
+import { enqueueCandidateIndex } from "@/server/index/enqueueIndex";
+
 export async function runExtractionForResumeDocument(args: {
   session: Session | null;
   resumeDocumentId: string;
@@ -201,6 +203,10 @@ export async function runExtractionForResumeDocument(args: {
     where: { id: doc.id },
     data: { extractionStatus: DocumentProcessingStatus.COMPLETE },
   });
+
+  if (result.appliedFields.length > 0) {
+    await enqueueCandidateIndex({ candidateId: doc.candidateId });
+  }
 
   return { ok: true, ...result, provider: extracted.provider };
 }

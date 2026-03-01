@@ -11,6 +11,7 @@ export const AuditEventTypes = {
   OcrRun: "ocr.run",
   ExtractRun: "extract.run",
   ExtractApply: "extract.apply",
+  IndexRun: "index.run",
 } as const;
 
 export type AuditEventType =

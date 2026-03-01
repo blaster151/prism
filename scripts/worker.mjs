@@ -72,6 +72,18 @@ const extractWorker = new Worker(
   { connection, concurrency: 1 },
 );
 
+const indexWorker = new Worker(
+  "index-candidate",
+  async (job) => {
+    const { candidateId } = job.data || {};
+    if (!candidateId) {
+      throw new Error("missing candidateId");
+    }
+    return await postJson("/api/internal/index/run", { candidateId });
+  },
+  { connection, concurrency: 1 },
+);
+
 const server = http.createServer((req, res) => {
   if (req.url === "/healthz") {
     res.writeHead(200, { "content-type": "text/plain; charset=utf-8" });
@@ -104,6 +116,13 @@ extractWorker.on("completed", (job) => {
   console.log(`job completed: ${job.id}`);
 });
 extractWorker.on("failed", (job, err) => {
+  console.log(`job failed: ${job?.id} ${err?.message ?? "unknown"}`);
+});
+
+indexWorker.on("completed", (job) => {
+  console.log(`job completed: ${job.id}`);
+});
+indexWorker.on("failed", (job, err) => {
   console.log(`job failed: ${job?.id} ${err?.message ?? "unknown"}`);
 });
 

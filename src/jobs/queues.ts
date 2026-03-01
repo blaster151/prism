@@ -6,6 +6,7 @@ export const QueueNames = {
   IngestDropbox: "ingest-dropbox",
   OcrResume: "ocr-resume",
   ExtractResume: "extract-resume",
+  IndexCandidate: "index-candidate",
 } as const;
 
 export type QueueName = (typeof QueueNames)[keyof typeof QueueNames];
@@ -78,6 +79,19 @@ export function getExtractQueue() {
     connection,
     defaultJobOptions: {
       attempts: 4,
+      backoff: { type: "exponential", delay: 10_000 },
+      removeOnComplete: 200,
+      removeOnFail: 200,
+    },
+  });
+}
+
+export function getIndexQueue() {
+  const connection = createRedisConnectionOptions();
+  return new Queue(QueueNames.IndexCandidate, {
+    connection,
+    defaultJobOptions: {
+      attempts: 5,
       backoff: { type: "exponential", delay: 10_000 },
       removeOnComplete: 200,
       removeOnFail: 200,

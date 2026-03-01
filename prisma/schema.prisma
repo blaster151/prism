@@ -75,9 +75,23 @@ model Candidate {
   embeddings      Embedding[]
   shortlistItems  ShortlistItem[]
   extractionSuggestions ExtractionSuggestion[]
+  searchDocument CandidateSearchDocument?
 
   @@index([lifecycleState])
   @@map("candidate")
+}
+
+model CandidateSearchDocument {
+  id         String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  candidateId String @unique @db.Uuid @map("candidate_id")
+  ftsText    String   @db.Text @map("fts_text")
+  createdAt  DateTime @default(now()) @map("created_at")
+  updatedAt  DateTime @updatedAt @map("updated_at")
+
+  candidate Candidate @relation(fields: [candidateId], references: [id], onDelete: Cascade)
+
+  @@index([candidateId])
+  @@map("candidate_search_document")
 }
 
 model ResumeDocument {
