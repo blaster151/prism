@@ -1,6 +1,6 @@
 # Story 3.4: Job status UI (ingestion pipeline visibility)
 
-Status: drafted
+Status: ready-for-dev
 
 ## Story
 
@@ -36,7 +36,7 @@ so that I can trust the system and recover from failures without guesswork.
 
 ### Context Reference
 
-<!-- Path(s) to story context XML will be added here by context workflow -->
+- `docs/stories/3-4-job-status-ui-ingestion-pipeline-visibility.context.xml`
 
 ### Agent Model Used
 
