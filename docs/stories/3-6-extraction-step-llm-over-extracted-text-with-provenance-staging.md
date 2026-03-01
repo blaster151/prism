@@ -1,6 +1,6 @@
 # Story 3.6: Extraction step (LLM over extracted text) with provenance staging
 
-Status: drafted
+Status: ready-for-dev
 
 ## Story
 
@@ -36,7 +36,7 @@ so that I can review/edit and the system never silently overwrites factual data.
 
 ### Context Reference
 
-<!-- Path(s) to story context XML will be added here by context workflow -->
+- `docs/stories/3-6-extraction-step-llm-over-extracted-text-with-provenance-staging.context.xml`
 
 ### Agent Model Used
 
