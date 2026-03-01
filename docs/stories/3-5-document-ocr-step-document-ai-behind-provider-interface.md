@@ -1,6 +1,6 @@
 # Story 3.5: Document OCR step (Document AI) behind provider interface
 
-Status: review
+Status: done
 
 ## Story
 
@@ -80,4 +80,16 @@ GPT-5.2
 
 - 2026-03-01: Draft created
  - 2026-03-01: Implemented OCR provider interface, Document AI provider, OCR persistence, queue/job wiring, internal worker execution, and tests; marked for review
+ - 2026-03-01: Code review approved; story complete
+
+## Senior Developer Review (AI)
+
+### Review Outcome
+
+Approve ✅
+
+### Notes / Follow-ups
+
+- The Document AI provider is implemented and lazily imported; it requires `DOCUMENT_AI_PROCESSOR_NAME` and standard Google auth env (e.g. `GOOGLE_APPLICATION_CREDENTIALS`) at runtime.
+- Worker uses an internal token to invoke OCR inside the app, keeping provider calls isolated behind `src/server/ocr/provider.ts` while still getting BullMQ retry semantics and job status visibility.
 
