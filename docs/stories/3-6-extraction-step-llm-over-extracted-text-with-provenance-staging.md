@@ -1,6 +1,6 @@
 # Story 3.6: Extraction step (LLM over extracted text) with provenance staging
 
-Status: review
+Status: done
 
 ## Story
 
@@ -79,4 +79,16 @@ GPT-5.2
 
 - 2026-03-01: Draft created
  - 2026-03-01: Implemented extraction w/ provenance + staging suggestions, queue/job wiring, audit logging, and tests; marked for review
+ - 2026-03-01: Code review approved; story complete
+
+## Senior Developer Review (AI)
+
+### Review Outcome
+
+Approve ✅
+
+### Notes / Follow-ups
+
+- Staging is persisted as `ExtractionSuggestion` rows; follow-up UI/workflow to accept/reject suggestions can be implemented in a later story without risking silent overwrites.
+- The default extractor is deterministic/no-network to keep CI stable; swapping to an LLM-backed provider later only requires adding a provider behind `src/server/extract/provider.ts`.
 
