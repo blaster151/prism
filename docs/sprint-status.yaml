@@ -65,8 +65,8 @@ development_status:
   3-8-playwright-e2e-ingest-trigger-status-visible: done
   epic-3-retrospective: optional
 
-  epic-4: backlog
-  4-1-define-embedding-strategy-and-data-plumbing-pgvector-model-metadata: backlog
+  epic-4: contexted
+  4-1-define-embedding-strategy-and-data-plumbing-pgvector-model-metadata: done
   4-2-implement-embedding-generation-service-llm-provider-pluggable: backlog
   4-3-build-hybrid-search-api-pgvector-postgres-fts-filters: backlog
   4-4-search-ui-results-list-with-rank-explanation-summary: backlog

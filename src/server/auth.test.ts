@@ -137,11 +137,11 @@ describe("jwt callback", () => {
 
 describe("session callback", () => {
   it("populates session.user with id and role from token", async () => {
-    const session = { user: { id: undefined, role: undefined } };
+    const session = { user: { id: undefined as string | undefined, role: undefined as string | undefined } };
     const token = { sub: "u1", role: "ADMIN" };
     const result = await sessionCallback({ session, token } as never);
-    expect(result.user.id).toBe("u1");
-    expect(result.user.role).toBe("ADMIN");
+    expect((result.user as Record<string, unknown>).id).toBe("u1");
+    expect((result.user as Record<string, unknown>).role).toBe("ADMIN");
   });
 });
 

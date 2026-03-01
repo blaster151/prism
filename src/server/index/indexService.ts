@@ -21,8 +21,10 @@ function buildFtsText(fields: Record<string, unknown>) {
   return parts.join("\n");
 }
 
-function deterministicEmbeddingVector(text: string) {
-  // Stable 8-dim numeric vector derived from text content. Placeholder until pgvector/real embeddings.
+function deterministicEmbeddingVector(text: string): number[] {
+  // Stable 1536-dim numeric vector derived from text content.
+  // Deterministic stub — replaced by real embedding provider in Story 4.2.
+  const DIMS = 1536;
   let h = 2166136261;
   for (let i = 0; i < text.length; i++) {
     h ^= text.charCodeAt(i);
@@ -30,7 +32,7 @@ function deterministicEmbeddingVector(text: string) {
   }
   const vec: number[] = [];
   let x = h >>> 0;
-  for (let i = 0; i < 8; i++) {
+  for (let i = 0; i < DIMS; i++) {
     x ^= x << 13;
     x ^= x >>> 17;
     x ^= x << 5;
@@ -65,11 +67,15 @@ export async function runIndexForCandidate(args: {
   const fields = (record?.fields ?? {}) as Record<string, unknown>;
   const ftsText = buildFtsText(fields);
 
-  const embeddingModel = "deterministic-v0";
+  const embeddingModel = "deterministic-stub";
   const embeddingVersion = 1;
   const vector = deterministicEmbeddingVector(ftsText);
+  // SAFE: vectorLiteral is numeric-only and always passed as a bind parameter ($4),
+  // never concatenated into the SQL string. Values are from deterministicEmbeddingVector (controlled output).
+  const vectorLiteral = `[${vector.join(",")}]`;
 
   async function applyIndexUpdates(tx: Prisma.TransactionClient) {
+    // Upsert CandidateSearchDocument (ftsText + ftsVector via raw SQL for tsvector)
     await tx.candidateSearchDocument.upsert({
       where: { candidateId: args.candidateId },
       create: { candidateId: args.candidateId, ftsText },
@@ -77,6 +83,17 @@ export async function runIndexForCandidate(args: {
       select: { id: true },
     });
 
+    // Populate the tsvector column via raw SQL (Prisma can't write Unsupported types).
+    // SAFETY: Prisma interactive tx client exposes $executeRawUnsafe at runtime.
+    // Cast through unknown because Prisma.TransactionClient type omits it.
+    // All values are parameterized ($1, $2) — no string interpolation in SQL.
+    await (tx as unknown as PrismaClient).$executeRawUnsafe(
+      `UPDATE candidate_search_document SET fts_vector = to_tsvector('english', $1) WHERE candidate_id = $2::uuid`,
+      ftsText,
+      args.candidateId,
+    );
+
+    // Delete old embedding for this model/version, then insert new one via raw SQL
     await tx.embedding.deleteMany({
       where: {
         candidateId: args.candidateId,
@@ -84,15 +101,16 @@ export async function runIndexForCandidate(args: {
         version: embeddingVersion,
       },
     });
-    await tx.embedding.create({
-      data: {
-        candidateId: args.candidateId,
-        model: embeddingModel,
-        version: embeddingVersion,
-        vector: vector as unknown as Prisma.InputJsonValue,
-      },
-      select: { id: true },
-    });
+
+    // SAFETY: same cast pattern as above; all values parameterized ($1–$4).
+    await (tx as unknown as PrismaClient).$executeRawUnsafe(
+      `INSERT INTO embedding (id, candidate_id, embedding_model, embedding_version, embedding_vector, created_at)
+       VALUES (gen_random_uuid(), $1::uuid, $2, $3, $4::vector(1536), NOW())`,
+      args.candidateId,
+      embeddingModel,
+      embeddingVersion,
+      vectorLiteral,
+    );
 
     await auditLog(
       {

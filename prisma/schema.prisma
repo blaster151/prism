@@ -85,6 +85,7 @@ model CandidateSearchDocument {
   id         String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   candidateId String @unique @db.Uuid @map("candidate_id")
   ftsText    String   @db.Text @map("fts_text")
+  ftsVector  Unsupported("tsvector")? @map("fts_vector")
   createdAt  DateTime @default(now()) @map("created_at")
   updatedAt  DateTime @updatedAt @map("updated_at")
 
@@ -190,7 +191,7 @@ model DataRecordFieldProvenance {
 model Embedding {
   id             String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   candidateId    String   @db.Uuid @map("candidate_id")
-  vector         Json     @map("embedding_vector")
+  vector         Unsupported("vector(1536)") @map("embedding_vector")
   model          String   @map("embedding_model")
   version        Int      @map("embedding_version")
   createdAt      DateTime @default(now()) @map("created_at")
