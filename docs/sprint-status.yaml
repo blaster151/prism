@@ -67,7 +67,7 @@ development_status:
 
   epic-4: contexted
   4-1-define-embedding-strategy-and-data-plumbing-pgvector-model-metadata: done
-  4-2-implement-embedding-generation-service-llm-provider-pluggable: backlog
+  4-2-implement-embedding-generation-service-llm-provider-pluggable: done
   4-3-build-hybrid-search-api-pgvector-postgres-fts-filters: backlog
   4-4-search-ui-results-list-with-rank-explanation-summary: backlog
   4-5-evidence-linked-explainability-data-record-fields-resume-spans: backlog

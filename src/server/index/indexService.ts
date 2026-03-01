@@ -4,6 +4,7 @@ import { AppError } from "@/lib/errors";
 import { auditLog } from "@/server/audit/auditLogger";
 import { AuditEventTypes } from "@/server/audit/eventTypes";
 import { prisma } from "@/server/db/prisma";
+import { getEmbedProvider } from "@/server/search/embedProvider";
 
 function buildFtsText(fields: Record<string, unknown>) {
   const parts: string[] = [];
@@ -19,26 +20,6 @@ function buildFtsText(fields: Record<string, unknown>) {
   if (restStr && restStr !== "{}") parts.push(restStr.slice(0, 4000));
 
   return parts.join("\n");
-}
-
-function deterministicEmbeddingVector(text: string): number[] {
-  // Stable 1536-dim numeric vector derived from text content.
-  // Deterministic stub — replaced by real embedding provider in Story 4.2.
-  const DIMS = 1536;
-  let h = 2166136261;
-  for (let i = 0; i < text.length; i++) {
-    h ^= text.charCodeAt(i);
-    h = Math.imul(h, 16777619);
-  }
-  const vec: number[] = [];
-  let x = h >>> 0;
-  for (let i = 0; i < DIMS; i++) {
-    x ^= x << 13;
-    x ^= x >>> 17;
-    x ^= x << 5;
-    vec.push(((x >>> 0) % 2000) / 1000 - 1); // [-1, 1)
-  }
-  return vec;
 }
 
 export async function runIndexForCandidate(args: {
@@ -67,11 +48,14 @@ export async function runIndexForCandidate(args: {
   const fields = (record?.fields ?? {}) as Record<string, unknown>;
   const ftsText = buildFtsText(fields);
 
-  const embeddingModel = "deterministic-stub";
+  // Generate embedding BEFORE the transaction to avoid holding a DB tx open
+  // during an HTTP call (real providers make network requests).
+  const provider = getEmbedProvider();
+  const embeddingModel = provider.name;
   const embeddingVersion = 1;
-  const vector = deterministicEmbeddingVector(ftsText);
+  const vector = await provider.embed(ftsText);
   // SAFE: vectorLiteral is numeric-only and always passed as a bind parameter ($4),
-  // never concatenated into the SQL string. Values are from deterministicEmbeddingVector (controlled output).
+  // never concatenated into the SQL string. Values are from the embed provider (controlled output).
   const vectorLiteral = `[${vector.join(",")}]`;
 
   async function applyIndexUpdates(tx: Prisma.TransactionClient) {
@@ -118,7 +102,7 @@ export async function runIndexForCandidate(args: {
         eventType: AuditEventTypes.IndexRun,
         entityType: "candidate",
         entityId: args.candidateId,
-        metadata: { recordId: record?.id ?? null, ftsCharCount: ftsText.length, model: embeddingModel },
+        metadata: { recordId: record?.id ?? null, ftsCharCount: ftsText.length, model: embeddingModel, dimensions: provider.dimensions },
       },
       { tx },
     );
@@ -135,5 +119,5 @@ export async function runIndexForCandidate(args: {
   return { ok: true, candidateId: args.candidateId, ftsCharCount: ftsText.length, embeddingModel };
 }
 
-export const __private = { buildFtsText, deterministicEmbeddingVector };
+export const __private = { buildFtsText };
 
