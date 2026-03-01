@@ -73,7 +73,7 @@ development_status:
   4-5-evidence-linked-explainability-data-record-fields-resume-spans: done
   4-6-iterative-refinement-context-preserved-across-prompts: done
   4-7-unit-integration-tests-for-hybrid-search-explainability-grounding: done
-  4-8-playwright-e2e-search-returns-ranked-results-with-explanations: backlog
+  4-8-playwright-e2e-search-returns-ranked-results-with-explanations: done
   epic-4-retrospective: optional
 
   epic-5: backlog
