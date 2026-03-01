@@ -17,7 +17,8 @@ export interface OcrProvider {
 
 class NoopOcrProvider implements OcrProvider {
   public readonly name = "noop";
-  async ocrPdf(_args: OcrPdfArgs): Promise<OcrResult> {
+  async ocrPdf(args: OcrPdfArgs): Promise<OcrResult> {
+    void args;
     return { provider: this.name, text: "" };
   }
 }
