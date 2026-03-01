@@ -90,5 +90,6 @@ Approve ✅
 ### Notes / Follow-ups
 
 - Staging is persisted as `ExtractionSuggestion` rows; follow-up UI/workflow to accept/reject suggestions can be implemented in a later story without risking silent overwrites.
+- Revisit and document the **product concept and user-facing explanation** for “factual field suggestions are staged (not auto-applied)”. This concept wasn’t clearly introduced prior to implementation and should be explicitly presented in UX/copy and system docs.
 - The default extractor is deterministic/no-network to keep CI stable; swapping to an LLM-backed provider later only requires adding a provider behind `src/server/extract/provider.ts`.
 

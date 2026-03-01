@@ -12,3 +12,4 @@ Routing guidance:
 | ---- | ----- | ---- | ---- | -------- | ----- | ------ | ----- |
 | 2026-02-28 | 1.2 | 1 | Enhancement | Med | TBD | Done | CI now builds `docker/Dockerfile.app` and `docker/Dockerfile.worker` to verify AC #2. Files: `.github/workflows/ci.yml`. |
 | 2026-02-28 | 1.2 | 1 | Documentation | Med | TBD | Done | README now clarifies `--source` buildpacks vs Dockerfile-based image deploy flow. Files: `README.md`. |
+| 2026-03-01 | 3.6 | 3 | UX/Spec | Med | TBD | Todo | Revisit and explicitly introduce the concept of **staging** “factual field” extraction suggestions (vs auto-apply). Add user-facing explanation/copy and confirm which fields are considered factual. |
