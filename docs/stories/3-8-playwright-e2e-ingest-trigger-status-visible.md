@@ -1,6 +1,6 @@
 # Story 3.8: Playwright E2E — ingest trigger → status visible
 
-Status: drafted
+Status: ready-for-dev
 
 ## Story
 
@@ -32,7 +32,7 @@ so that the async pipeline is regression-tested.
 
 ### Context Reference
 
-<!-- Path(s) to story context XML will be added here by context workflow -->
+- `docs/stories/3-8-playwright-e2e-ingest-trigger-status-visible.context.xml`
 
 ### Agent Model Used
 
