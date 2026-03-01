@@ -2,8 +2,8 @@ import { describe, expect, it, vi } from "vitest";
 
 const addMock = vi.hoisted(() => vi.fn(async () => ({ id: "job-123" })));
 
-vi.mock("@/jobs/queues", () => ({
-  getIngestDropboxQueue: () => ({
+vi.mock("./ingestionQueue", () => ({
+  getIngestDropboxQueueSingleton: () => ({
     add: addMock,
   }),
 }));

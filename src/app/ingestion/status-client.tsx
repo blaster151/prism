@@ -1,8 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
-
-type ApiError = { error: { code: string; message: string } };
+import { useCallback, useEffect, useMemo, useState } from "react";
 
 type Job = {
   id: string;
@@ -21,11 +19,19 @@ function formatTime(ts: number | null) {
   return new Date(ts).toLocaleString();
 }
 
+function getErrorMessage(json: unknown): string | null {
+  if (!json || typeof json !== "object") return null;
+  const err = (json as { error?: unknown }).error;
+  if (!err || typeof err !== "object") return null;
+  const msg = (err as { message?: unknown }).message;
+  return typeof msg === "string" ? msg : null;
+}
+
 async function apiJson<T>(input: RequestInfo, init?: RequestInit): Promise<T> {
   const res = await fetch(input, init);
-  const json = (await res.json().catch(() => ({}))) as any;
+  const json: unknown = await res.json().catch(() => ({}));
   if (!res.ok) {
-    const msg = (json as ApiError)?.error?.message ?? "Request failed.";
+    const msg = getErrorMessage(json) ?? "Request failed.";
     throw new Error(msg);
   }
   return json as T;
@@ -40,7 +46,7 @@ export function IngestionStatusClient() {
 
   const canRetry = useMemo(() => new Set(jobs.filter((j) => j.state === "failed").map((j) => j.id)), [jobs]);
 
-  async function refresh() {
+  const refresh = useCallback(async () => {
     setIsLoading(true);
     setError(null);
     try {
@@ -53,7 +59,7 @@ export function IngestionStatusClient() {
     } finally {
       setIsLoading(false);
     }
-  }
+  }, []);
 
   async function triggerIngestion() {
     setTriggerFail(null);
@@ -82,11 +88,10 @@ export function IngestionStatusClient() {
   }
 
   useEffect(() => {
-    refresh();
-    const t = setInterval(() => refresh(), 4000);
+    void refresh();
+    const t = setInterval(() => void refresh(), 4000);
     return () => clearInterval(t);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [refresh]);
 
   return (
     <section className="rounded-md border border-neutral-200 p-4">
