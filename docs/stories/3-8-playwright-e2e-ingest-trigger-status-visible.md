@@ -1,6 +1,6 @@
 # Story 3.8: Playwright E2E — ingest trigger → status visible
 
-Status: ready-for-dev
+Status: review
 
 ## Story
 
@@ -15,9 +15,9 @@ so that the async pipeline is regression-tested.
 
 ## Tasks / Subtasks
 
-- [ ] Add Playwright E2E covering ingestion trigger → status view (AC: 1)
-- [ ] Provide CI-safe test doubles for Dropbox + OCR provider (AC: 2)
-- [ ] Ensure test is non-interactive and stable in CI (AC: 1-2)
+- [x] Add Playwright E2E covering ingestion trigger → status view (AC: 1)
+- [x] Provide CI-safe test doubles for Dropbox + OCR provider (AC: 2)
+- [x] Ensure test is non-interactive and stable in CI (AC: 1-2)
 
 ## Dev Notes
 
@@ -40,11 +40,24 @@ GPT-5.2
 
 ### Debug Log References
 
+2026-03-01:
+- Added Playwright E2E test `e2e/ingest-trigger-status.spec.ts`:
+  - Mints a NextAuth JWT session cookie for a PowerUser test user
+  - Navigates to `/ingestion`, triggers ingestion, and asserts the job appears and reaches a terminal state
+  - Uses Playwright route mocks for ingestion APIs to avoid Redis/Dropbox/OCR dependencies in CI
+- Verified `npm test`, `npm run lint -- --max-warnings=0`, `npm run build`, and `npm run test:e2e` pass.
+
 ### Completion Notes List
 
+ - ✅ E2E covers ingestion trigger → status visible for signed-in user.
+ - ✅ CI-safe mocks used; no external dependencies required.
+
 ### File List
+
+ - NEW: `e2e/ingest-trigger-status.spec.ts`
 
 ## Change Log
 
 - 2026-03-01: Draft created
+ - 2026-03-01: Implemented CI-safe E2E coverage for ingestion trigger → status visible; marked for review
 
