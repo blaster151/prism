@@ -1,6 +1,6 @@
 import { describe, expect, it, vi } from "vitest";
 
-const addMock = vi.fn(async () => ({ id: "job-123" }));
+const addMock = vi.hoisted(() => vi.fn(async () => ({ id: "job-123" })));
 
 vi.mock("@/jobs/queues", () => ({
   getIngestDropboxQueue: () => ({
@@ -8,13 +8,14 @@ vi.mock("@/jobs/queues", () => ({
   }),
 }));
 
-const auditLogMock = vi.fn(async () => ({ id: "ae_1" }));
+const auditLogMock = vi.hoisted(() => vi.fn(async () => ({ id: "ae_1" })));
 vi.mock("@/server/audit/auditLogger", () => ({
   auditLog: auditLogMock,
 }));
 
+const requireRoleMock = vi.hoisted(() => vi.fn(() => undefined));
 vi.mock("@/server/auth/requireRole", () => ({
-  requireRole: vi.fn(() => undefined),
+  requireRole: requireRoleMock,
 }));
 
 import { enqueueDropboxIngest } from "./ingestionService";
@@ -34,6 +35,7 @@ describe("ingestionService", () => {
     expect(res.jobId).toBe("job-123");
     expect(addMock).toHaveBeenCalled();
     expect(auditLogMock).toHaveBeenCalled();
+    expect(requireRoleMock).toHaveBeenCalled();
   });
 });
 
