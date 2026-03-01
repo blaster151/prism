@@ -43,11 +43,12 @@ vi.mock("@/server/db/prisma", () => {
       create: versionCreateMock,
     },
   };
+  type Tx = typeof tx;
 
   return {
     prisma: {
       resumeDocument: tx.resumeDocument,
-      $transaction: async (fn: any) => await fn(tx),
+      $transaction: async (fn: (tx: Tx) => Promise<unknown>) => await fn(tx),
     },
   };
 });

@@ -42,6 +42,7 @@ export async function runExtractionForResumeDocument(args: {
       httpStatus: 409,
     });
   }
+  const ocrText = doc.ocrText;
 
   await client.resumeDocument.update({
     where: { id: doc.id },
@@ -51,7 +52,7 @@ export async function runExtractionForResumeDocument(args: {
   const provider = getExtractProvider();
   let extracted: Awaited<ReturnType<typeof provider.extract>>;
   try {
-    extracted = await provider.extract({ text: doc.ocrText });
+    extracted = await provider.extract({ text: ocrText });
   } catch (err) {
     await client.resumeDocument.update({
       where: { id: doc.id },
@@ -65,7 +66,7 @@ export async function runExtractionForResumeDocument(args: {
     });
   }
 
-  const result = await client.$transaction(async (tx) => {
+  const runInTx = async (tx: Prisma.TransactionClient) => {
     const record =
       (await tx.dataRecord.findUnique({
         where: { candidateId: doc.candidateId },
@@ -180,7 +181,7 @@ export async function runExtractionForResumeDocument(args: {
         metadata: {
           provider: extracted.provider,
           model: extracted.model?.name ?? null,
-          ocrCharCount: doc.ocrText.length,
+          ocrCharCount: ocrText.length,
           appliedFields: appliedFieldNames,
           stagedCount: staged.length,
         },
@@ -189,7 +190,12 @@ export async function runExtractionForResumeDocument(args: {
     );
 
     return { recordId: record.id, appliedFields: appliedFieldNames, stagedCount: staged.length };
-  });
+  };
+
+  const result =
+    typeof (client as PrismaClient).$transaction === "function"
+      ? await (client as PrismaClient).$transaction(runInTx)
+      : await runInTx(client as Prisma.TransactionClient);
 
   await client.resumeDocument.update({
     where: { id: doc.id },
