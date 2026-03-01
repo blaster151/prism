@@ -1,0 +1,30 @@
+<story-context id="bmad/bmm/workflows/4-implementation/story-context/template" v="1.0">
+  <metadata>
+    <epicId>3</epicId>
+    <storyId>8</storyId>
+    <title>Playwright E2E — ingest trigger → status visible</title>
+    <status>drafted</status>
+    <generatedAt>2026-03-01</generatedAt>
+    <generator>BMAD Story Context Workflow</generator>
+    <sourceStoryPath>docs/stories/3-8-playwright-e2e-ingest-trigger-status-visible.md</sourceStoryPath>
+  </metadata>
+
+  <acceptanceCriteria>
+    <ac id="1">Signed-in test user can trigger ingestion in UI and see job reach terminal state in status view.</ac>
+    <ac id="2">CI-safe mocks/doubles used (no external Dropbox/OCR dependencies).</ac>
+  </acceptanceCriteria>
+
+  <dependencies>
+    <dependsOn story="1.8">Playwright foundation present</dependsOn>
+    <dependsOn story="3.4">Ingestion status UI exists</dependsOn>
+  </dependencies>
+
+  <artifacts>
+    <code>
+      <file path="e2e" kind="tests" reason="Add new E2E spec for trigger → status." />
+      <file path="src/server/auth.ts" kind="auth" reason="JWT strategy; E2E will mint a session token cookie." />
+      <file path="playwright.config.ts" kind="config" reason="Sets NEXTAUTH_SECRET for local webServer." />
+    </code>
+  </artifacts>
+</story-context>
+

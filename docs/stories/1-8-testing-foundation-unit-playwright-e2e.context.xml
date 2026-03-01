@@ -1,0 +1,48 @@
+<story-context id="bmad/bmm/workflows/4-implementation/story-context/template" v="1.0">
+  <metadata>
+    <epicId>1</epicId>
+    <storyId>8</storyId>
+    <title>Testing foundation (unit + Playwright E2E)</title>
+    <status>drafted</status>
+    <generatedAt>2026-02-28</generatedAt>
+    <generator>BMAD Story Context Workflow</generator>
+    <sourceStoryPath>docs/stories/1-8-testing-foundation-unit-playwright-e2e.md</sourceStoryPath>
+  </metadata>
+
+  <story>
+    <asA>developer</asA>
+    <iWant>a test framework for unit/integration and Playwright E2E</iWant>
+    <soThat>we can ship automated coverage and run end-to-end regression each sprint</soThat>
+    <tasks>
+      <task id="T1">Configure unit/integration test runner for local + CI (AC: 1)</task>
+      <task id="T2">Add baseline unit test example + CI command (AC: 1, 4)</task>
+      <task id="T3">Install/configure Playwright and add headless CI command (AC: 2, 4)</task>
+      <task id="T4">Add minimal E2E validating auth gate redirect (AC: 3)</task>
+      <task id="T5">Document exact commands (AC: 1, 2)</task>
+    </tasks>
+  </story>
+
+  <acceptanceCriteria>
+    <ac id="1">Standard way to run unit/integration tests locally and in CI.</ac>
+    <ac id="2">Standard way to run Playwright E2E locally (headless) and in CI.</ac>
+    <ac id="3">Minimal Playwright E2E validates auth gate (unauthenticated users prompted to sign in).</ac>
+    <ac id="4">Test runs are non-interactive (no “press q to quit”).</ac>
+  </acceptanceCriteria>
+
+  <artifacts>
+    <docs>
+      <doc path="docs/tech-spec-epic-1.md" title="Epic 1 Tech Spec" section="Test Strategy Summary" snippet="Unit/integration + Playwright E2E should run headless in CI; first E2E validates auth gate." />
+      <doc path="docs/architecture.md" title="Architecture" section="Development Environment" snippet="CI-friendly, non-interactive commands; headless E2E." />
+    </docs>
+    <code>
+      <file path="package.json" kind="config" symbol="scripts" lines="5-15" reason="Test commands exposed via npm scripts." />
+      <file path=".github/workflows/ci.yml" kind="ci" symbol="jobs.build.steps" lines="9-23" reason="CI must run tests non-interactively." />
+      <file path="src/middleware.ts" kind="middleware" symbol="middleware" lines="1-40" reason="Auth gate behavior should be validated by E2E." />
+    </code>
+  </artifacts>
+
+  <constraints>
+    <constraint>CI runs must be non-interactive; avoid watch modes and interactive reporters. (Source: Story 1.8 AC4)</constraint>
+  </constraints>
+</story-context>
+

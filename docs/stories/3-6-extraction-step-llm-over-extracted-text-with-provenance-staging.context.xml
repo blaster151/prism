@@ -1,0 +1,32 @@
+<story-context id="bmad/bmm/workflows/4-implementation/story-context/template" v="1.0">
+  <metadata>
+    <epicId>3</epicId>
+    <storyId>6</storyId>
+    <title>Extraction step (LLM over extracted text) with provenance staging</title>
+    <status>drafted</status>
+    <generatedAt>2026-03-01</generatedAt>
+    <generator>BMAD Story Context Workflow</generator>
+    <sourceStoryPath>docs/stories/3-6-extraction-step-llm-over-extracted-text-with-provenance-staging.md</sourceStoryPath>
+  </metadata>
+
+  <acceptanceCriteria>
+    <ac id="1">With OCR text available, extraction creates/updates DataRecord and writes provenance rows (EXTRACTED vs INFERRED).</ac>
+    <ac id="2">Suggested changes to factual fields are staged for explicit user confirmation.</ac>
+    <ac id="3">Extraction actions are audit-logged.</ac>
+  </acceptanceCriteria>
+
+  <dependencies>
+    <dependsOn story="2.3">DataRecord update + provenance infrastructure exists</dependsOn>
+    <dependsOn story="3.5">OCR text persisted on ResumeDocument</dependsOn>
+  </dependencies>
+
+  <artifacts>
+    <code>
+      <file path="src/server/extract/provider.ts" kind="interface" reason="Pluggable extraction provider boundary." />
+      <file path="src/server/records/dataRecordService.ts" kind="service" reason="Has DataRecord update + versioning patterns to reuse." />
+      <file path="prisma/schema.prisma" kind="schema" reason="Add staging storage for suggested factual-field changes." />
+      <file path="src/server/audit/eventTypes.ts" kind="audit" reason="Add extraction audit event taxonomy." />
+    </code>
+  </artifacts>
+</story-context>
+

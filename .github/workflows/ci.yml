@@ -16,7 +16,21 @@ jobs:
           cache: "npm"
       - name: Install
         run: npm ci
+      - name: Unit tests
+        run: npm test
       - name: Lint
         run: npm run lint -- --max-warnings=0
       - name: Build
         run: npm run build
+      - name: Docker build (app)
+        run: docker build -f docker/Dockerfile.app -t prism-app:ci .
+      - name: Docker build (worker)
+        run: docker build -f docker/Dockerfile.worker -t prism-worker:ci .
+      - name: Install Playwright browsers
+        run: npx playwright install --with-deps chromium
+      - name: E2E tests (Playwright)
+        env:
+          CI: "true"
+          NEXTAUTH_URL: "http://127.0.0.1:3000"
+          NEXTAUTH_SECRET: "test-secret"
+        run: npm run test:e2e

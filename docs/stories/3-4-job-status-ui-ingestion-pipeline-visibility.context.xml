@@ -1,0 +1,32 @@
+<story-context id="bmad/bmm/workflows/4-implementation/story-context/template" v="1.0">
+  <metadata>
+    <epicId>3</epicId>
+    <storyId>4</storyId>
+    <title>Job status UI (ingestion pipeline visibility)</title>
+    <status>drafted</status>
+    <generatedAt>2026-03-01</generatedAt>
+    <generator>BMAD Story Context Workflow</generator>
+    <sourceStoryPath>docs/stories/3-4-job-status-ui-ingestion-pipeline-visibility.md</sourceStoryPath>
+  </metadata>
+
+  <acceptanceCriteria>
+    <ac id="1">Ingestion/status screen shows job state and basic error info.</ac>
+    <ac id="2">Authorized users can retry failed jobs.</ac>
+    <ac id="3">Retries are audit-logged.</ac>
+  </acceptanceCriteria>
+
+  <dependencies>
+    <dependsOn story="3.1">BullMQ + Redis plumbing</dependsOn>
+    <dependsOn story="3.3">Ingestion trigger endpoint and ingest queue</dependsOn>
+  </dependencies>
+
+  <artifacts>
+    <code>
+      <file path="src/jobs/queues.ts" kind="queue" reason="Ingest queue identifier and connection helper." />
+      <file path="src/server/audit/eventTypes.ts" kind="audit" reason="Add retry audit event type." />
+      <file path="src/lib/errors.ts" kind="errors" reason="Safe error envelopes for API responses." />
+      <file path="src/middleware.ts" kind="auth" reason="Auth gate already protects UI routes by default." />
+    </code>
+  </artifacts>
+</story-context>
+

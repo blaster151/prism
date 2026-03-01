@@ -1,0 +1,37 @@
+<story-context id="bmad/bmm/workflows/4-implementation/story-context/template" v="1.0">
+  <metadata>
+    <epicId>3</epicId>
+    <storyId>3</storyId>
+    <title>Resume ingestion trigger API (enqueue ingest job)</title>
+    <status>drafted</status>
+    <generatedAt>2026-03-01</generatedAt>
+    <generator>BMAD Story Context Workflow</generator>
+    <sourceStoryPath>docs/stories/3-3-resume-ingestion-trigger-api-enqueue-ingest-job.md</sourceStoryPath>
+  </metadata>
+
+  <story>
+    <asA>PowerUser</asA>
+    <iWant>trigger ingestion for a Dropbox path (or default folder)</iWant>
+    <soThat>new/updated resumes can be processed into Data Records</soThat>
+  </story>
+
+  <acceptanceCriteria>
+    <ac id="1">Authenticated caller can trigger ingestion; job enqueued; returns job id.</ac>
+    <ac id="2">Trigger action is audit-logged.</ac>
+  </acceptanceCriteria>
+
+  <dependencies>
+    <dependsOn story="3.1">BullMQ + Redis plumbing and worker</dependsOn>
+    <dependsOn story="3.2">Dropbox client integration (least-privilege)</dependsOn>
+  </dependencies>
+
+  <artifacts>
+    <code>
+      <file path="src/jobs/queues.ts" kind="queue" reason="Add ingestion queue name and enqueue helper." />
+      <file path="src/server/dropbox/dropboxService.ts" kind="service" reason="Lists Dropbox folder; used to validate requested path optionally." />
+      <file path="src/server/audit/auditLogger.ts" kind="service" reason="Audit log user-triggered ingestion trigger." />
+      <file path="src/server/auth/requireRole.ts" kind="authz" reason="RBAC enforcement (PowerUser)." />
+    </code>
+  </artifacts>
+</story-context>
+

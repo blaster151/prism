@@ -1,0 +1,251 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum UserRole {
+  ADMIN
+  POWER_USER
+}
+
+enum UserStatus {
+  ACTIVE
+  DISABLED
+}
+
+enum CandidateLifecycleState {
+  ACTIVE
+  ARCHIVE
+}
+
+enum DocumentProcessingStatus {
+  PENDING
+  COMPLETE
+  FAILED
+}
+
+enum DataProvenanceSource {
+  EXTRACTED
+  INFERRED
+  USER_EDITED
+}
+
+enum ExtractionSuggestionStatus {
+  PENDING
+  APPLIED
+  REJECTED
+}
+
+enum ShortlistItemState {
+  PINNED
+  KEPT
+  EXCLUDED
+  SUGGESTED
+}
+
+model User {
+  id        String     @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  email     String     @unique
+  name      String?
+  passwordHash String? @map("password_hash")
+  role      UserRole   @default(POWER_USER)
+  status    UserStatus @default(ACTIVE)
+  createdAt DateTime   @default(now()) @map("created_at")
+  updatedAt DateTime   @updatedAt @map("updated_at")
+
+  shortlists Shortlist[]
+  provenanceEdits DataRecordFieldProvenance[] @relation("UserProvenanceEdits")
+  dataRecordVersions DataRecordVersion[] @relation("UserDataRecordVersions")
+
+  @@map("user")
+}
+
+model Candidate {
+  id                 String                 @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  lifecycleState     CandidateLifecycleState @default(ACTIVE) @map("lifecycle_state")
+  canonicalPersonKey String?                @map("canonical_person_key")
+  createdAt          DateTime               @default(now()) @map("created_at")
+  updatedAt          DateTime               @updatedAt @map("updated_at")
+
+  resumeDocuments ResumeDocument[]
+  dataRecord      DataRecord?
+  embeddings      Embedding[]
+  shortlistItems  ShortlistItem[]
+  extractionSuggestions ExtractionSuggestion[]
+  searchDocument CandidateSearchDocument?
+
+  @@index([lifecycleState])
+  @@map("candidate")
+}
+
+model CandidateSearchDocument {
+  id         String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  candidateId String @unique @db.Uuid @map("candidate_id")
+  ftsText    String   @db.Text @map("fts_text")
+  createdAt  DateTime @default(now()) @map("created_at")
+  updatedAt  DateTime @updatedAt @map("updated_at")
+
+  candidate Candidate @relation(fields: [candidateId], references: [id], onDelete: Cascade)
+
+  @@index([candidateId])
+  @@map("candidate_search_document")
+}
+
+model ResumeDocument {
+  id              String                   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  candidateId     String                   @db.Uuid @map("candidate_id")
+  dropboxPath     String                   @map("dropbox_path")
+  contentHash     String?                  @map("content_hash")
+  ocrStatus       DocumentProcessingStatus @default(PENDING) @map("ocr_status")
+  ocrProvider     String?                  @map("ocr_provider")
+  ocrText         String?                  @db.Text @map("ocr_text")
+  extractionStatus DocumentProcessingStatus @default(PENDING) @map("extraction_status")
+  createdAt       DateTime                 @default(now()) @map("created_at")
+  updatedAt       DateTime                 @updatedAt @map("updated_at")
+
+  candidate   Candidate                  @relation(fields: [candidateId], references: [id], onDelete: Cascade)
+  provenances DataRecordFieldProvenance[] @relation("ProvenanceSourceDocument")
+  extractionSuggestions ExtractionSuggestion[]
+
+  @@index([candidateId])
+  @@index([dropboxPath])
+  @@map("resume_document")
+}
+
+model ExtractionSuggestion {
+  id              String                     @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  resumeDocumentId String                    @db.Uuid @map("resume_document_id")
+  candidateId     String                     @db.Uuid @map("candidate_id")
+  fieldName       String                     @map("field_name")
+  existingValue   String?                    @db.Text @map("existing_value")
+  suggestedValue  String                     @db.Text @map("suggested_value")
+  source          DataProvenanceSource       @map("source")
+  status          ExtractionSuggestionStatus @default(PENDING) @map("status")
+  createdAt       DateTime                   @default(now()) @map("created_at")
+  updatedAt       DateTime                   @updatedAt @map("updated_at")
+
+  resumeDocument ResumeDocument @relation(fields: [resumeDocumentId], references: [id], onDelete: Cascade)
+  candidate      Candidate      @relation(fields: [candidateId], references: [id], onDelete: Cascade)
+
+  @@index([resumeDocumentId])
+  @@index([candidateId])
+  @@index([status])
+  @@unique([resumeDocumentId, fieldName, status])
+  @@map("extraction_suggestion")
+}
+
+model DataRecord {
+  id          String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  candidateId String   @unique @db.Uuid @map("candidate_id")
+  fields      Json     @default("{}")
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+
+  candidate   Candidate                 @relation(fields: [candidateId], references: [id], onDelete: Cascade)
+  provenances DataRecordFieldProvenance[]
+  versions    DataRecordVersion[]
+
+  @@map("data_record")
+}
+
+model DataRecordVersion {
+  id           String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  recordId     String   @db.Uuid @map("record_id")
+  versionNumber Int     @map("version_number")
+  fields       Json
+  actorUserId  String?  @db.Uuid @map("actor_user_id")
+  createdAt    DateTime @default(now()) @map("created_at")
+
+  record   DataRecord @relation(fields: [recordId], references: [id], onDelete: Cascade)
+  actorUser User?     @relation("UserDataRecordVersions", fields: [actorUserId], references: [id], onDelete: SetNull)
+
+  @@unique([recordId, versionNumber])
+  @@index([recordId])
+  @@index([createdAt])
+  @@map("data_record_version")
+}
+
+model DataRecordFieldProvenance {
+  id                  String              @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  recordId             String              @db.Uuid @map("record_id")
+  fieldName            String              @map("field_name")
+  source               DataProvenanceSource @map("source")
+  sourceDocumentId     String?             @db.Uuid @map("source_document_id")
+  lastModifiedByUserId String?             @db.Uuid @map("last_modified_by_user_id")
+  lastModifiedAt       DateTime?           @map("last_modified_at")
+
+  record            DataRecord      @relation(fields: [recordId], references: [id], onDelete: Cascade)
+  sourceDocument    ResumeDocument? @relation("ProvenanceSourceDocument", fields: [sourceDocumentId], references: [id], onDelete: SetNull)
+  lastModifiedByUser User?          @relation("UserProvenanceEdits", fields: [lastModifiedByUserId], references: [id], onDelete: SetNull)
+
+  @@index([recordId])
+  @@index([fieldName])
+  @@index([source])
+  @@map("data_record_field_provenance")
+}
+
+model Embedding {
+  id             String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  candidateId    String   @db.Uuid @map("candidate_id")
+  vector         Json     @map("embedding_vector")
+  model          String   @map("embedding_model")
+  version        Int      @map("embedding_version")
+  createdAt      DateTime @default(now()) @map("created_at")
+
+  candidate Candidate @relation(fields: [candidateId], references: [id], onDelete: Cascade)
+
+  @@index([candidateId])
+  @@map("embedding")
+}
+
+model Shortlist {
+  id          String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  ownerUserId String   @db.Uuid @map("owner_user_id")
+  name        String
+  queryContext String? @map("query_context")
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+
+  ownerUser User          @relation(fields: [ownerUserId], references: [id], onDelete: Cascade)
+  items     ShortlistItem[]
+
+  @@index([ownerUserId])
+  @@map("shortlist")
+}
+
+model ShortlistItem {
+  id          String            @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  shortlistId String            @db.Uuid @map("shortlist_id")
+  candidateId String            @db.Uuid @map("candidate_id")
+  state       ShortlistItemState @default(SUGGESTED) @map("state")
+  rationale   String?           @map("rationale")
+  createdAt   DateTime          @default(now()) @map("created_at")
+  updatedAt   DateTime          @updatedAt @map("updated_at")
+
+  shortlist Shortlist @relation(fields: [shortlistId], references: [id], onDelete: Cascade)
+  candidate Candidate @relation(fields: [candidateId], references: [id], onDelete: Cascade)
+
+  @@unique([shortlistId, candidateId])
+  @@index([candidateId])
+  @@index([state])
+  @@map("shortlist_item")
+}
+
+model AuditEvent {
+  id          String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  actorUserId String?  @db.Uuid @map("actor_user_id")
+  eventType   String   @map("event_type")
+  entityType  String?  @map("entity_type")
+  entityId    String?  @map("entity_id")
+  metadata    Json     @default("{}")
+  createdAt   DateTime @default(now()) @map("created_at")
+
+  @@index([actorUserId])
+  @@index([eventType])
+  @@index([createdAt])
+  @@map("audit_event")
+}
+

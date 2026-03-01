@@ -1,0 +1,45 @@
+<story-context id="bmad/bmm/workflows/4-implementation/story-context/template" v="1.0">
+  <metadata>
+    <epicId>2</epicId>
+    <storyId>3</storyId>
+    <title>Data Record view/edit with provenance indicators</title>
+    <status>drafted</status>
+    <generatedAt>2026-02-28</generatedAt>
+    <generator>BMAD Story Context Workflow</generator>
+    <sourceStoryPath>docs/stories/2-3-data-record-view-edit-with-provenance-indicators.md</sourceStoryPath>
+  </metadata>
+
+  <story>
+    <asA>PowerUser</asA>
+    <iWant>to view and edit a candidate’s structured Data Record with provenance indicators</iWant>
+    <soThat>I can correct extraction errors without losing trust in the data</soThat>
+    <tasks>
+      <task id="T1">Implement Data Record view page + service (AC: 1)</task>
+      <task id="T2">Implement edit flow for initial key fields + extensible JSONB (AC: 2)</task>
+      <task id="T3">Display provenance indicators per field (AC: 3)</task>
+      <task id="T4">Attribution/versioning model for edits (AC: 4)</task>
+      <task id="T5">RBAC enforced in service layer (AC: 2)</task>
+      <task id="T6">Audit-log edits with safe metadata (AC: 5)</task>
+      <task id="T7">Tests for edit + provenance transition + audit log (AC: 2-5)</task>
+    </tasks>
+  </story>
+
+  <acceptanceCriteria>
+    <ac id="1">Data Record screen shows structured record.</ac>
+    <ac id="2">Users can edit fields.</ac>
+    <ac id="3">Each field shows provenance (extracted/inferred/user-edited).</ac>
+    <ac id="4">Edits are attributed and versioned.</ac>
+    <ac id="5">Edits are audit-logged.</ac>
+  </acceptanceCriteria>
+
+  <artifacts>
+    <docs>
+      <doc path="docs/architecture.md" title="Architecture" section="Provenance is modeled, not implied" snippet="Provenance and user-edits must be explicit to preserve trust." />
+    </docs>
+    <code>
+      <file path="prisma/schema.prisma" kind="schema" symbol="DataRecord/DataRecordFieldProvenance" lines="1-220" reason="Record + provenance storage." />
+      <file path="src/server/audit/auditLogger.ts" kind="service" symbol="auditLog" lines="1-80" reason="Audit edits." />
+    </code>
+  </artifacts>
+</story-context>
+

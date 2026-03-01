@@ -1,6 +1,6 @@
 # Story 1.2: Create Cloud Run deployment skeleton (app + worker)
 
-Status: in-progress
+Status: done
 
 ## Story
 
@@ -26,9 +26,9 @@ so that we can deploy early and iterate with confidence.
 
 ### Review Follow-ups (AI)
 
-- [ ] [AI-Review][Med] Add a CI step to build `docker/Dockerfile.app` and `docker/Dockerfile.worker` so AC #2 (“images build successfully”) is verifiable. (AC: 2) [file: .github/workflows/ci.yml]
-- [ ] [AI-Review][Med] Update Cloud Run deployment docs to show an image-based deploy flow (or explicitly state `--source` uses buildpacks and may not exercise the Dockerfiles). (AC: 3) [file: README.md]
-- [ ] [AI-Review][Low] Fix README edit path to `src/app/page.tsx` (not `app/page.tsx`). [file: README.md]
+- [x] [AI-Review][Med] Add a CI step to build `docker/Dockerfile.app` and `docker/Dockerfile.worker` so AC #2 (“images build successfully”) is verifiable. (AC: 2) [file: .github/workflows/ci.yml]
+- [x] [AI-Review][Med] Update Cloud Run deployment docs to show an image-based deploy flow (or explicitly state `--source` uses buildpacks and may not exercise the Dockerfiles). (AC: 3) [file: README.md]
+- [x] [AI-Review][Low] Fix README edit path to `src/app/page.tsx` (not `app/page.tsx`). [file: README.md]
 
 ## Dev Notes
 
@@ -88,6 +88,55 @@ GPT-5.2
 - 2026-02-28: Draft created
 - 2026-02-28: Added Cloud Run app/worker Dockerfiles, placeholder worker, and deploy instructions; marked ready for review
 - 2026-02-28: Senior Developer Review (AI) notes appended (Changes Requested)
+- 2026-02-28: Addressed review follow-ups (CI docker builds + README clarification); marked ready for re-review
+- 2026-02-28: Follow-up code review approved; marked done
+
+## Senior Developer Review (AI) — Follow-up Review
+
+### Reviewer
+
+BMad
+
+### Date
+
+2026-02-28
+
+### Outcome
+
+Approve — AC #2 is now verifiably satisfied in CI, and deployment docs clearly describe Dockerfile-based deploy flows.
+
+### Summary
+
+This follow-up resolves the two medium issues raised in the initial review of Story 1.2:
+
+- CI now runs `docker build` for both `docker/Dockerfile.app` and `docker/Dockerfile.worker`, providing automated evidence for AC #2 (“Both images build successfully”).
+- README now clarifies that `gcloud run deploy --source .` uses buildpacks by default and provides an explicit Dockerfile-based image build + deploy example.
+
+### Key Findings
+
+**HIGH**
+
+- None.
+
+**MEDIUM**
+
+- None (previously required changes are implemented).
+
+**LOW**
+
+- Docker builds in CI can add runtime; consider layer caching if CI gets slow as the project grows. (Evidence: `.github/workflows/ci.yml`)
+
+### Acceptance Criteria Coverage (Updated)
+
+| AC# | Description | Status | Evidence |
+| --- | --- | --- | --- |
+| 1 | Dockerfiles exist for `prism-app` and `prism-worker` | IMPLEMENTED | `docker/Dockerfile.app`, `docker/Dockerfile.worker` |
+| 2 | Both images build successfully | IMPLEMENTED | `.github/workflows/ci.yml` (Docker build steps) |
+| 3 | Deployment instructions exist for separate Cloud Run services | IMPLEMENTED | `README.md` (two-service model + image-based deploy example) |
+| 4 | Env vars sourced from secrets/config and not committed | IMPLEMENTED | `.env.example`, `.gitignore`, `README.md` |
+| 5 | Worker placeholder runs as distinct service | IMPLEMENTED | `docker/Dockerfile.worker`, `scripts/worker.mjs` |
+
+**AC Coverage Summary:** 5 of 5 acceptance criteria fully implemented.
 
 ## Senior Developer Review (AI)
 

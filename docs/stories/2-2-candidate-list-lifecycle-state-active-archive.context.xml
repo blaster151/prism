@@ -1,0 +1,44 @@
+<story-context id="bmad/bmm/workflows/4-implementation/story-context/template" v="1.0">
+  <metadata>
+    <epicId>2</epicId>
+    <storyId>2</storyId>
+    <title>Candidate list + lifecycle state (Active/Archive)</title>
+    <status>drafted</status>
+    <generatedAt>2026-02-28</generatedAt>
+    <generator>BMAD Story Context Workflow</generator>
+    <sourceStoryPath>docs/stories/2-2-candidate-list-lifecycle-state-active-archive.md</sourceStoryPath>
+  </metadata>
+
+  <story>
+    <asA>PowerUser</asA>
+    <iWant>to view candidates and filter by Active/Archive</iWant>
+    <soThat>I can focus on current pipelines while retaining history</soThat>
+    <tasks>
+      <task id="T1">Candidate list page + API/service to fetch candidates (AC: 1)</task>
+      <task id="T2">Lifecycle filter default Active (AC: 2)</task>
+      <task id="T3">Lifecycle toggle mutation in service layer with RBAC (AC: 3)</task>
+      <task id="T4">Audit-log lifecycle changes (AC: 4)</task>
+      <task id="T5">Tests for transitions + RBAC + audit logging (AC: 3, 4)</task>
+    </tasks>
+  </story>
+
+  <acceptanceCriteria>
+    <ac id="1">Candidates page displays a list of candidates.</ac>
+    <ac id="2">Filter by lifecycle state (default Active).</ac>
+    <ac id="3">Authorized users can toggle Active/Archive.</ac>
+    <ac id="4">Lifecycle changes are audit-logged.</ac>
+  </acceptanceCriteria>
+
+  <artifacts>
+    <docs>
+      <doc path="docs/architecture.md" title="Architecture" section="Implementation Patterns" snippet="Service layer first; route handlers call server services; RBAC + audit in service layer." />
+      <doc path="docs/architecture.md" title="Architecture" section="Data Architecture" snippet="Candidate has lifecycle_state (ACTIVE|ARCHIVE) which should be reflected in filters." />
+    </docs>
+    <code>
+      <file path="prisma/schema.prisma" kind="schema" symbol="Candidate" lines="1-200" reason="Candidate lifecycle is persisted and must be queried/mutated." />
+      <file path="src/server/auth/requireRole.ts" kind="service" symbol="requireRole" lines="1-40" reason="RBAC enforcement for lifecycle mutation." />
+      <file path="src/server/audit/auditLogger.ts" kind="service" symbol="auditLog" lines="1-80" reason="Audit logging for lifecycle change." />
+    </code>
+  </artifacts>
+</story-context>
+

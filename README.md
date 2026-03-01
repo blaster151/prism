@@ -10,7 +10,7 @@ npm run dev
 
 Open `http://localhost:3000` with your browser to see the result.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+You can start editing the page by modifying `src/app/page.tsx`. The page auto-updates as you edit the file.
 
 This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
 
@@ -50,6 +50,22 @@ gcloud run deploy prism-worker \
   --no-allow-unauthenticated
 ```
 
+**Note:** `gcloud run deploy --source .` uses **buildpacks** by default and may not exercise the Dockerfiles in `docker/`.
+If you want to deploy using the repo Dockerfiles, build and deploy images instead:
+
+```bash
+# Example: build images with Cloud Build into Artifact Registry
+REGION=REGION
+PROJECT_ID=PROJECT_ID
+REPO=REPO
+
+gcloud builds submit --region "$REGION" --tag "$REGION-docker.pkg.dev/$PROJECT_ID/$REPO/prism-app:latest" -f docker/Dockerfile.app .
+gcloud builds submit --region "$REGION" --tag "$REGION-docker.pkg.dev/$PROJECT_ID/$REPO/prism-worker:latest" -f docker/Dockerfile.worker .
+
+gcloud run deploy prism-app --image "$REGION-docker.pkg.dev/$PROJECT_ID/$REPO/prism-app:latest" --region "$REGION" --allow-unauthenticated=false
+gcloud run deploy prism-worker --image "$REGION-docker.pkg.dev/$PROJECT_ID/$REPO/prism-worker:latest" --region "$REGION" --no-allow-unauthenticated
+```
+
 ### Configuration / secrets
 
 - Do **not** commit secrets. Use Cloud Run env vars and/or Secret Manager.
@@ -69,3 +85,17 @@ You can check out [the Next.js GitHub repository](https://github.com/vercel/next
 The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
 
 Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+
+## Testing
+
+### Unit tests
+
+```bash
+npm test
+```
+
+### E2E tests (Playwright, headless)
+
+```bash
+npm run test:e2e
+```

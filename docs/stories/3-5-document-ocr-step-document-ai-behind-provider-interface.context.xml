@@ -1,0 +1,35 @@
+<story-context id="bmad/bmm/workflows/4-implementation/story-context/template" v="1.0">
+  <metadata>
+    <epicId>3</epicId>
+    <storyId>5</storyId>
+    <title>Document OCR step (Document AI) behind provider interface</title>
+    <status>drafted</status>
+    <generatedAt>2026-03-01</generatedAt>
+    <generator>BMAD Story Context Workflow</generator>
+    <sourceStoryPath>docs/stories/3-5-document-ocr-step-document-ai-behind-provider-interface.md</sourceStoryPath>
+  </metadata>
+
+  <acceptanceCriteria>
+    <ac id="1">OCR text output is produced and stored/associated with ResumeDocument.</ac>
+    <ac id="2">Provider calls isolated behind `src/server/ocr/provider.ts`.</ac>
+    <ac id="3">Failures are retried and surfaced in job status.</ac>
+  </acceptanceCriteria>
+
+  <dependencies>
+    <dependsOn story="3.1">BullMQ + Redis plumbing</dependsOn>
+    <dependsOn story="3.4">Job status patterns (RBAC, safe error display) exist</dependsOn>
+  </dependencies>
+
+  <artifacts>
+    <data>
+      <entity>ResumeDocument</entity>
+      <fields>ocrStatus, ocrText (new), ocrProvider (new)</fields>
+    </data>
+    <code>
+      <file path="src/server/ocr/provider.ts" kind="interface" reason="Pluggable OCR provider boundary." />
+      <file path="src/jobs/worker.ts" kind="worker" reason="Add OCR job processor with retries/backoff." />
+      <file path="prisma/schema.prisma" kind="schema" reason="Persist OCR output associated with ResumeDocument." />
+    </code>
+  </artifacts>
+</story-context>
+

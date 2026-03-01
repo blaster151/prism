@@ -1,0 +1,32 @@
+import { defineConfig, devices } from "@playwright/test";
+
+export default defineConfig({
+  testDir: "./e2e",
+  reporter: "line",
+  use: {
+    baseURL: process.env.PLAYWRIGHT_BASE_URL ?? "http://127.0.0.1:3000",
+    trace: "retain-on-failure",
+    video: "retain-on-failure",
+    screenshot: "only-on-failure",
+  },
+  projects: [
+    {
+      name: "chromium",
+      use: { ...devices["Desktop Chrome"] },
+    },
+  ],
+  webServer: process.env.PLAYWRIGHT_BASE_URL
+    ? undefined
+    : {
+        command: "npm run dev -- --port 3000",
+        url: "http://127.0.0.1:3000",
+        env: {
+          NEXTAUTH_URL: "http://127.0.0.1:3000",
+          NEXTAUTH_SECRET: "test-secret",
+          PRISM_ALLOW_USER_CREATE: "false",
+        },
+        reuseExistingServer: !process.env.CI,
+        timeout: 120_000,
+      },
+});
+

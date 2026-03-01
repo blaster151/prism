@@ -1,0 +1,31 @@
+<story-context id="bmad/bmm/workflows/4-implementation/story-context/template" v="1.0">
+  <metadata>
+    <epicId>3</epicId>
+    <storyId>7</storyId>
+    <title>Index update job (embeddings + FTS) on record changes</title>
+    <status>drafted</status>
+    <generatedAt>2026-03-01</generatedAt>
+    <generator>BMAD Story Context Workflow</generator>
+    <sourceStoryPath>docs/stories/3-7-index-update-job-embeddings-fts-on-record-changes.md</sourceStoryPath>
+  </metadata>
+
+  <acceptanceCriteria>
+    <ac id="1">On DataRecord create/edit, indexing job updates embeddings and FTS document for the candidate.</ac>
+    <ac id="2">Indexing is idempotent and retryable.</ac>
+  </acceptanceCriteria>
+
+  <dependencies>
+    <dependsOn story="2.3">DataRecord write path exists</dependsOn>
+    <dependsOn story="3.1">BullMQ/Redis job plumbing exists</dependsOn>
+  </dependencies>
+
+  <artifacts>
+    <code>
+      <file path="src/server/records/dataRecordService.ts" kind="trigger" reason="Hook indexing enqueue on record edits." />
+      <file path="src/jobs/queues.ts" kind="queue" reason="Define index queue name and defaults (retry/backoff)." />
+      <file path="prisma/schema.prisma" kind="schema" reason="Store/update FTS document per candidate." />
+      <file path="src/server/index/indexService.ts" kind="service" reason="Idempotent indexing job implementation." />
+    </code>
+  </artifacts>
+</story-context>
+
