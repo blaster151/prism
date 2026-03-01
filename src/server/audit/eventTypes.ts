@@ -14,6 +14,7 @@ export const AuditEventTypes = {
   IndexRun: "index.run",
   SearchQuery: "search.query",
   SearchExplain: "search.explain",
+  SearchRefine: "search.refine",
 } as const;
 
 export type AuditEventType =

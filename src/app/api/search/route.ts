@@ -8,6 +8,12 @@ import { requireRole } from "@/server/auth/requireRole";
 import { UserRole } from "@/server/auth/rbac";
 import { hybridSearch } from "@/server/search/hybridSearch";
 import { explainResults } from "@/server/search/explainService";
+import {
+  createSession,
+  getSession,
+  appendRefinement,
+  buildCombinedQuery,
+} from "@/server/search/searchSessionService";
 import { auditLog } from "@/server/audit/auditLogger";
 import { AuditEventTypes } from "@/server/audit/eventTypes";
 
@@ -17,6 +23,7 @@ import { AuditEventTypes } from "@/server/audit/eventTypes";
 
 const SearchRequestSchema = z.object({
   query: z.string().min(1, "Query must not be empty.").max(2000),
+  sessionId: z.string().uuid().optional(),
   filters: z
     .object({
       lifecycleState: z.enum(["ACTIVE", "ARCHIVE"]).optional(),
@@ -37,34 +44,67 @@ export async function POST(req: Request) {
     const body: unknown = await req.json();
     const parsed = SearchRequestSchema.parse(body);
 
+    const userId = session?.user?.id;
+
+    // --- Session management ---
+    let searchSession;
+    let isRefinement = false;
+
+    if (parsed.sessionId) {
+      // Refinement: append to existing session
+      searchSession = await appendRefinement({
+        sessionId: parsed.sessionId,
+        query: parsed.query,
+        filters: parsed.filters,
+      });
+      isRefinement = true;
+    } else if (userId) {
+      // New search: create session
+      searchSession = await createSession({
+        userId,
+        query: parsed.query,
+        filters: parsed.filters,
+      });
+    }
+
+    // Build combined query from session history (or use raw query if no session)
+    const effectiveQuery = searchSession
+      ? buildCombinedQuery(searchSession.queryHistory)
+      : parsed.query;
+
     const { results: rawResults } = await hybridSearch({
-      query: parsed.query,
+      query: effectiveQuery,
       filters: parsed.filters,
       limit: parsed.limit,
     });
 
     // Generate grounded explanations for each result
     const results = await explainResults({
-      query: parsed.query,
+      query: effectiveQuery,
       results: rawResults,
     });
 
     // Audit log — non-sensitive metadata only (never raw query text)
     await auditLog({
-      actorUserId: session?.user?.id,
-      eventType: AuditEventTypes.SearchQuery,
+      actorUserId: userId,
+      eventType: isRefinement
+        ? AuditEventTypes.SearchRefine
+        : AuditEventTypes.SearchQuery,
       entityType: "search",
       metadata: {
         queryLength: parsed.query.length,
         resultCount: results.length,
         lifecycleFilter: parsed.filters?.lifecycleState ?? "ACTIVE",
         limit: parsed.limit,
+        sessionId: searchSession?.id ?? null,
+        isRefinement,
+        historyLength: searchSession?.queryHistory.length ?? 1,
       },
     });
 
     // Audit log explanation generation (non-sensitive metadata only)
     await auditLog({
-      actorUserId: session?.user?.id,
+      actorUserId: userId,
       eventType: AuditEventTypes.SearchExplain,
       entityType: "search",
       metadata: {
@@ -77,6 +117,8 @@ export async function POST(req: Request) {
       data: {
         results,
         resultCount: results.length,
+        sessionId: searchSession?.id ?? null,
+        queryContext: searchSession?.currentContext ?? parsed.query,
       },
     });
   } catch (err) {

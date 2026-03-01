@@ -57,6 +57,7 @@ model User {
   updatedAt DateTime   @updatedAt @map("updated_at")
 
   shortlists Shortlist[]
+  searchSessions SearchSession[]
   provenanceEdits DataRecordFieldProvenance[] @relation("UserProvenanceEdits")
   dataRecordVersions DataRecordVersion[] @relation("UserDataRecordVersions")
 
@@ -200,6 +201,20 @@ model Embedding {
 
   @@index([candidateId])
   @@map("embedding")
+}
+
+model SearchSession {
+  id             String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  userId         String   @db.Uuid @map("user_id")
+  queryHistory   Json     @default("[]") @map("query_history")
+  currentContext String?  @db.Text @map("current_context")
+  createdAt      DateTime @default(now()) @map("created_at")
+  updatedAt      DateTime @updatedAt @map("updated_at")
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@map("search_session")
 }
 
 model Shortlist {

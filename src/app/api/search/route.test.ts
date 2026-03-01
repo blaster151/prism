@@ -4,6 +4,7 @@ import { z } from "zod";
 // Recreate the schema from the route handler for isolated testing
 const SearchRequestSchema = z.object({
   query: z.string().min(1, "Query must not be empty.").max(2000),
+  sessionId: z.string().uuid().optional(),
   filters: z
     .object({
       lifecycleState: z.enum(["ACTIVE", "ARCHIVE"]).optional(),

@@ -61,9 +61,13 @@ describe("search types", () => {
     const resp: SearchResponse = {
       results: [],
       resultCount: 0,
+      sessionId: "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
+      queryContext: "systems engineer",
     };
     expect(resp.results).toHaveLength(0);
     expect(resp.resultCount).toBe(0);
+    expect(resp.sessionId).toBeDefined();
+    expect(resp.queryContext).toBeDefined();
   });
 });
 

@@ -42,6 +42,7 @@ export interface SearchFilters {
 
 export interface SearchRequest {
   query: string;
+  sessionId?: string;       // omit for new search, include for refinement
   filters?: SearchFilters;
   limit?: number;           // 1–100, default 20
 }
@@ -49,4 +50,6 @@ export interface SearchRequest {
 export interface SearchResponse {
   results: SearchResult[];
   resultCount: number;
+  sessionId: string;
+  queryContext: string;     // human-readable accumulated context
 }

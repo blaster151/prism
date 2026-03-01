@@ -71,7 +71,7 @@ development_status:
   4-3-build-hybrid-search-api-pgvector-postgres-fts-filters: done
   4-4-search-ui-results-list-with-rank-explanation-summary: done
   4-5-evidence-linked-explainability-data-record-fields-resume-spans: done
-  4-6-iterative-refinement-context-preserved-across-prompts: backlog
+  4-6-iterative-refinement-context-preserved-across-prompts: done
   4-7-unit-integration-tests-for-hybrid-search-explainability-grounding: backlog
   4-8-playwright-e2e-search-returns-ranked-results-with-explanations: backlog
   epic-4-retrospective: optional
