@@ -4,6 +4,7 @@ import type { ConnectionOptions } from "bullmq";
 export const QueueNames = {
   TestNoop: "test-noop",
   IngestDropbox: "ingest-dropbox",
+  OcrResume: "ocr-resume",
 } as const;
 
 export type QueueName = (typeof QueueNames)[keyof typeof QueueNames];
@@ -50,6 +51,19 @@ export function getIngestDropboxQueue() {
     connection,
     defaultJobOptions: {
       attempts: 5,
+      backoff: { type: "exponential", delay: 5_000 },
+      removeOnComplete: 200,
+      removeOnFail: 200,
+    },
+  });
+}
+
+export function getOcrQueue() {
+  const connection = createRedisConnectionOptions();
+  return new Queue(QueueNames.OcrResume, {
+    connection,
+    defaultJobOptions: {
+      attempts: 4,
       backoff: { type: "exponential", delay: 5_000 },
       removeOnComplete: 200,
       removeOnFail: 200,

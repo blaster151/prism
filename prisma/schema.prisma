@@ -79,6 +79,8 @@ model ResumeDocument {
   dropboxPath     String                   @map("dropbox_path")
   contentHash     String?                  @map("content_hash")
   ocrStatus       DocumentProcessingStatus @default(PENDING) @map("ocr_status")
+  ocrProvider     String?                  @map("ocr_provider")
+  ocrText         String?                  @db.Text @map("ocr_text")
   extractionStatus DocumentProcessingStatus @default(PENDING) @map("extraction_status")
   createdAt       DateTime                 @default(now()) @map("created_at")
   updatedAt       DateTime                 @updatedAt @map("updated_at")

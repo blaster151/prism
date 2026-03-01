@@ -8,6 +8,7 @@ export const AuditEventTypes = {
   DropboxListFolder: "dropbox.list_folder",
   IngestionTrigger: "ingestion.trigger",
   IngestionRetry: "ingestion.retry",
+  OcrRun: "ocr.run",
 } as const;
 
 export type AuditEventType =

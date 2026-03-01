@@ -2,6 +2,8 @@ import { Worker } from "bullmq";
 import http from "node:http";
 
 import { QueueNames, createRedisConnectionOptions } from "./queues";
+import { runOcrForResumeDocument } from "@/server/ocr/ocrService";
+import { prisma } from "@/server/db/prisma";
 
 const port = Number.parseInt(process.env.PORT || "8080", 10);
 
@@ -31,6 +33,24 @@ export function startWorker() {
     { connection, concurrency: 1 },
   );
 
+  const ocrWorker = new Worker(
+    QueueNames.OcrResume,
+    async (job) => {
+      const data = job.data as unknown as {
+        resumeDocumentId: string;
+        pdfBase64: string;
+      };
+      // Job is internal; session is not available in worker context.
+      return await runOcrForResumeDocument({
+        session: null,
+        resumeDocumentId: data.resumeDocumentId,
+        pdfBase64: data.pdfBase64,
+        opts: { tx: prisma },
+      });
+    },
+    { connection, concurrency: 1 },
+  );
+
   const server = http.createServer((req, res) => {
     if (req.url === "/healthz") {
       res.writeHead(200, { "content-type": "text/plain; charset=utf-8" });
@@ -45,7 +65,7 @@ export function startWorker() {
     console.log(`prism-worker listening on :${port}`);
   });
 
-  for (const w of [testWorker, ingestWorker]) {
+  for (const w of [testWorker, ingestWorker, ocrWorker]) {
     w.on("completed", (job) => {
       console.log(`job completed: ${job.id}`);
     });
@@ -54,6 +74,6 @@ export function startWorker() {
     });
   }
 
-  return { workers: [testWorker, ingestWorker], server };
+  return { workers: [testWorker, ingestWorker, ocrWorker], server };
 }
 
