@@ -8,10 +8,9 @@ const port = Number.parseInt(process.env.PORT || "8080", 10);
 export function startWorker() {
   const connection = createRedisConnectionOptions();
 
-  const worker = new Worker(
+  const testWorker = new Worker(
     QueueNames.TestNoop,
     async (job) => {
-      // no-op processor used for validating wiring
       if (
         (job.data as unknown as { shouldFail?: boolean })?.shouldFail === true &&
         job.attemptsMade < 2
@@ -20,10 +19,16 @@ export function startWorker() {
       }
       return { ok: true };
     },
-    {
-      connection,
-      concurrency: 2,
+    { connection, concurrency: 2 },
+  );
+
+  const ingestWorker = new Worker(
+    QueueNames.IngestDropbox,
+    async () => {
+      // Placeholder processor: real ingestion pipeline comes in later Epic 3 stories.
+      return { ok: true };
     },
+    { connection, concurrency: 1 },
   );
 
   const server = http.createServer((req, res) => {
@@ -40,13 +45,15 @@ export function startWorker() {
     console.log(`prism-worker listening on :${port}`);
   });
 
-  worker.on("completed", (job) => {
-    console.log(`job completed: ${job.id}`);
-  });
-  worker.on("failed", (job, err) => {
-    console.log(`job failed: ${job?.id} ${err?.message ?? "unknown"}`);
-  });
+  for (const w of [testWorker, ingestWorker]) {
+    w.on("completed", (job) => {
+      console.log(`job completed: ${job.id}`);
+    });
+    w.on("failed", (job, err) => {
+      console.log(`job failed: ${job?.id} ${err?.message ?? "unknown"}`);
+    });
+  }
 
-  return { worker, server };
+  return { workers: [testWorker, ingestWorker], server };
 }
 

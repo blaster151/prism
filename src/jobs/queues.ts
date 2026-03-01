@@ -3,6 +3,7 @@ import type { ConnectionOptions } from "bullmq";
 
 export const QueueNames = {
   TestNoop: "test-noop",
+  IngestDropbox: "ingest-dropbox",
 } as const;
 
 export type QueueName = (typeof QueueNames)[keyof typeof QueueNames];
@@ -39,6 +40,19 @@ export function getTestNoopQueue() {
       backoff: { type: "exponential", delay: 1_000 },
       removeOnComplete: 100,
       removeOnFail: 100,
+    },
+  });
+}
+
+export function getIngestDropboxQueue() {
+  const connection = createRedisConnectionOptions();
+  return new Queue(QueueNames.IngestDropbox, {
+    connection,
+    defaultJobOptions: {
+      attempts: 5,
+      backoff: { type: "exponential", delay: 5_000 },
+      removeOnComplete: 200,
+      removeOnFail: 200,
     },
   });
 }

@@ -6,6 +6,7 @@ export const AuditEventTypes = {
   CandidateLifecycleChange: "candidate.lifecycle_change",
   DataRecordEdit: "data_record.edit",
   DropboxListFolder: "dropbox.list_folder",
+  IngestionTrigger: "ingestion.trigger",
 } as const;
 
 export type AuditEventType =
