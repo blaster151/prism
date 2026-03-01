@@ -55,7 +55,7 @@ development_status:
   epic-2-retrospective: optional
 
   epic-3: backlog
-  3-1-configure-redis-bullmq-plumbing-local-env: review
+  3-1-configure-redis-bullmq-plumbing-local-env: done
   3-2-dropbox-client-integration-least-privilege: drafted
   3-3-resume-ingestion-trigger-api-enqueue-ingest-job: drafted
   3-4-job-status-ui-ingestion-pipeline-visibility: drafted

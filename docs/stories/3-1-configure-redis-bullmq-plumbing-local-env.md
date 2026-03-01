@@ -1,6 +1,6 @@
 # Story 3.1: Configure Redis + BullMQ plumbing (local + env)
 
-Status: review
+Status: done
 
 ## Story
 
@@ -80,4 +80,24 @@ GPT-5.2
 
 - 2026-03-01: Draft created
  - 2026-03-01: Implemented Redis + BullMQ plumbing with noop worker/queue, enqueue + status APIs, retries/backoff, and tests; marked for review
+ - 2026-03-01: Code review approved; story complete
+
+## Senior Developer Review (AI)
+
+### Review Outcome
+
+Approve ✅
+
+### What I Reviewed
+
+- Queue wiring and Redis env boundary (`REDIS_URL`)
+- Job enqueue/status APIs and state mapping
+- Retry/backoff configuration and intentional failure mode
+- Worker entrypoint behavior (health endpoint + processing loop)
+- Unit test strategy (mocked BullMQ)
+
+### Notes / Follow-ups
+
+- Consider adding a small UI stub in Epic 3.4 (job status visibility) that calls the status endpoint, instead of adding UI here.
+- When we start using additional queues, prefer a single shared connection/options helper (already started via `createRedisConnectionOptions`).
 
