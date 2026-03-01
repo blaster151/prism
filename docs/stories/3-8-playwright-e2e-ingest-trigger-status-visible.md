@@ -1,6 +1,6 @@
 # Story 3.8: Playwright E2E — ingest trigger → status visible
 
-Status: review
+Status: done
 
 ## Story
 
@@ -60,4 +60,15 @@ GPT-5.2
 
 - 2026-03-01: Draft created
  - 2026-03-01: Implemented CI-safe E2E coverage for ingestion trigger → status visible; marked for review
+ - 2026-03-01: Code review approved; story complete
+
+## Senior Developer Review (AI)
+
+### Review Outcome
+
+Approve ✅
+
+### Notes
+
+- The E2E test uses a signed NextAuth JWT cookie and Playwright route mocks for ingestion APIs, making it stable in CI without Redis/Dropbox/OCR.
 
